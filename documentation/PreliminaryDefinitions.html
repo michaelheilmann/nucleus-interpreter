@@ -1,0 +1,163 @@
+<DOCTYPE html>
+<html>
+<div>
+<h2>Preliminary Definitions</h2>
+<h3>Integer numbers, natural numbers, and boolean values</h3>
+<p>The set of integers is denoted by $\mathbb{Z}$, the set of natural numbers by $\mathbb{N}$.
+The set of boolean values is denoted by $\mathbb{B} = \left\{ true, false \right\}$.</p>
+
+<h3>List ADT</h3>
+Let $T$ be a non-empty finite set of elements. One can inductively define a set $[T]$ consisting
+of $n$-tuples with elements from $T$ for all $n\in\mathbb{N}$. Firstly,       the $0$-tuple $[]$
+is added to    $[T]$, secondly for each element $x \in T$ the $1$-tuple $[x]$ is added to $[T]$.
+
+Thirdly, define a binary operator $\circ : [T] \times [T] \rightarrow [T]$. For any element  $a$
+in $[T]$ and the $0$-tuple the operator in satisfies the requirement $[]\circ a = a \circ []= a$
+(and in particular $[] \circ [] = []$). Given any two elements $a=[a_1,\ldots,a_n]$ and $b=[b_1,
+\ldots,b_m]$ with $n,m > 0$ the operator is defined as $a \circ b = [a_1,\ldots,a_n] \circ [b_1,
+\ldots,b_m] = [a_1,\ldots,a_n, b_1,\ldots,b_m]$. 
+
+The remaining elements of $[T]$ can now be defined in terms of existing elements and the $\circ$
+operator: Given any two elements $a$ and $b$ in $[T]$, there exists an element $a \circ b$ in
+$[T]$ as well.
+
+Obviously the operator $\circ$ is associative i.e. given three elements $a,b,c$ then $a \circ (b
+\circ c) = (a \circ b) \circ c$ holds. The length $|a|$ of a tuple is its number of elements:
+The empty tuple $[]$ has the length $0$ and the tuple $a = [a_1,\ldots,a_n], n > 0$ has the length
+$n$.
+
+<h3>Convenience functionality for lists</h3>
+<p>Given an element type $T$, the function for creating an empty list is defined as<p>
+\[\begin{align*}
+&List\langle T\rangle.create: \rightarrow [T]\\
+&List\langle T\rangle.create() \coloneqq []
+\end{align*}\]
+</p></p>
+
+<p>Furthermore we define two convenience functions $size$ and $empty$ as
+\[\begin{align*}
+&List.size: [T] \rightarrow \mathbb{N}\\
+&List.size(l) \coloneqq |l|
+\end{align*}\]
+and
+\[\begin{align*}
+&List.empty : [T] \rightarrow \mathbb{B}\\
+&List.empty(l) \coloneqq size(l) = 0
+\end{align*}\]
+The former function determines the size of the list, the latter determines the list is empty or not.
+</p>
+
+<p>
+The operator $\circ$ is defined between lists, for the sake of convenience, we define functions
+for appending and prepending single list elements to lists.
+\[\begin{align*}
+&List.pushBack: [T] \times T \rightarrow [T]\\
+&List.pushBack(l, e) \coloneqq l \circ [e]
+\end{align*}\]
+and
+\[\begin{align*}
+&List.pushFront : [T] \times T \rightarrow [T]\\
+&List.pushFront(l, e) \coloneqq [e] \circ l
+\end{align*}\]
+</p>
+
+<h3>The indefinite cases</h3>
+<p>Operations like accessing and removing elements to lists are partial functions. A special value
+$\bot$ is used to indicate the case in which a partial function is not defined. For this document,
+any function $f : X_1 \times \ldots \times X_n \rightarrow Y$ can receive $\bot$ for any of    its
+arguments and return $\bot$ despite $\bot$ is neither an element of the sets  $X_i, 1\leq i\leq n$ 
+nor an element of the set $Y$. Furthermore if $\bot$ is received for some argument by a  function,
+the function evaluates to $\bot$ regardless of its definition.</p>
+
+<p>Now functions for returning the first and the last element of a list can be defined.</p>
+<p>$List.peekFront$ takes a list and returns the first element of the list if the list is not empty and returns $\bot$ otherwise.</p>
+<p>
+\[\begin{align*}
+&List.peekFront : [T] \rightarrow T\\
+&List.peekFront(l) = 
+\begin{cases}
+e & \textit{, if } l = \left[e\right] \circ l'\\
+\bot & \textit{, otherwise}
+\end{cases}
+\end{align*}\]
+</p>
+<p>$List.peekBack$ takes a list and returns the last element of the list if the list is not empty and returns $\bot$ otherwise.</p>
+<p>
+\[\begin{align*}
+&List.peekBack : [T] \rightarrow T\\
+&List.peekBack(l) = 
+\begin{cases}
+e & \textit{, if } l = l' \circ \left[e\right]\\
+\bot & \textit{, otherwise}
+\end{cases}
+\end{align*}\]
+</p>
+
+<p>Removing the first element and the last element of a list can be defined similarly.</p>
+<p>$List.popFront$ takes a list and returns the list with the first element removed if the list is not empty and returns $\bot$ otherwise.</p>
+<p>
+\[\begin{align*}
+&List.popFront : [T] \rightarrow T\\
+&List.popFront(l) =
+\begin{cases}
+e & \textit{, if } l = [e] \circ l'\\
+\bot & \textit{, otherwise}
+\end{cases}
+\end{align*}\]
+</p>
+<p>$List.popBack$ takes a list and returns the list with the last element removed if the list is not empty and returns $\bot$ otherwise.</p>
+<p>
+\[\begin{align*}
+&List.popBack : [T] \rightarrow T\\
+&List.popBack(l) = 
+\begin{cases}
+e & \textit{, if } l = l' \circ \left[e\right]\\
+\bot & \textit{, otherwise}
+\end{cases}
+\end{align*}\]
+</p>
+
+<h3>A stack ADT</h3>
+<p>A stack ADT can be modelled using the list ADT.</p> 
+<p>Given an element type $T$, the functions $Stack\langle T\rangle.create$, $Stack.empty$,
+and $Stack.size$ can be defined in a straight forward fashion.</p>
+<p>
+\[\begin{align*}
+&Stack\langle T \rangle.create = List\langle T \rangle.create\\
+&Stack.empty = List.empty\\
+&Stack.size = List.size
+\end{align*}\]
+</p>
+
+<p>A stack supports the operations of pushing an element on the stack, peeking at the topmost
+element, and popping the topmost element from the stack.</p>
+
+<p>
+$Stack.push$ takes an stack and an an and returns a new stack to which the elemented is appended.
+<p>
+\[\begin{align*}
+&Stack.push : [T] \times T \rightarrow [T]\\
+&Stack.push(s, e) = List.pushBack(s,e)
+\end{align*}\]
+</p>
+</p>
+
+<p>
+$Stack.peek$ takes a stack and returns the topmost element on a stack if the stack is not empty and returns $\bot$ otherwise.
+<p>
+\[\begin{align*}
+&Stack.peek : [T] \rightarrow T\\
+&Stack.peek(s) = List.peekBack(s) 
+\end{align*}\]
+</p>
+
+<p>$Stack.pop$ takes a stack and returns a stack with the topmost element removed if the stack is not empty and returns $\bot$ otherwise.</p>
+<p>
+\[\begin{align*}
+&Stack.pop : [T] \rightarrow [T]\\
+&Stack.pop(s) = List.pop(s)
+\end{align*}\]
+</p>
+
+</div>
+</html>

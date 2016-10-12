@@ -1,0 +1,74 @@
+#include "Nucleus/Interpreter/StringIterator-private.h.in"
+
+Nucleus_Interpreter_NonNull() static void
+visit
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringIterator *self
+    )
+{}
+
+Nucleus_Interpreter_NonNull() static void
+finalizeType
+    (
+        Nucleus_Interpreter_GC *gc,
+        Nucleus_Interpreter_Type *type
+    )
+{ g_type = NULL; }
+
+Nucleus_Interpreter_ReturnNonNull() Nucleus_Interpreter_NonNull() static Nucleus_Interpreter_Type *
+getOrCreateType
+    (
+        Nucleus_Interpreter_Context *context
+    )
+{
+    if (!g_type)
+    {
+        g_type = Nucleus_Interpreter_getOrCreateForeignType
+                    (
+                        context,
+                        NULL,
+                        NUCLEUS_INTERPRETER_OBJECT_VISIT(&visit),
+                        NUCLEUS_INTERPRETER_FINALIZETYPE(&finalizeType)
+                    );
+    }
+    return g_type;
+}
+
+Nucleus_Interpreter_NonNull() static size_t
+beginOffset
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringIterator *stringIterator
+    )
+{ return 0; }
+
+Nucleus_Interpreter_NonNull() static size_t
+endOffset
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringIterator *stringIterator
+    )
+{ return Nucleus_Interpreter_String_getNumberOfBytes(context, stringIterator->string) + 1; }
+
+Nucleus_Interpreter_NonNull() static void
+updateSymbol
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringIterator *stringIterator
+    )
+{
+    // 0
+    if (stringIterator->offset == beginOffset(context, stringIterator))
+    { stringIterator->symbol = Nucleus_Interpreter_Symbol_begin(context); }
+    // n + 1
+    else if (stringIterator->offset == endOffset(context, stringIterator))
+    { stringIterator->symbol = Nucleus_Interpreter_Symbol_end(context); }
+    // 1, ..., n
+    else
+    {
+        const char *byte = Nucleus_Interpreter_String_getBytes(NUCLEUS_INTERPRETER_CONTEXT(context),
+                                                               stringIterator->string)
+                         + stringIterator->offset - 1;
+        stringIterator->symbol = Nucleus_Interpreter_Symbol_create_uint8(context, (uint8_t)*(byte)); }
+}

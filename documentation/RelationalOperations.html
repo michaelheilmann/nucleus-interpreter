@@ -1,0 +1,35 @@
+<DOCTYPE html>
+<html>
+<div>
+<h4>Relational Operations</h4>
+<h5>Equality Relation Operations</h5>
+<p>The equality relation operation are $EqualTo$ and $NotEqualTo$ which compute if two values are
+equal or not equal, respectively. The inequality operation $\matthtt{NotEqualTo}$ is defined   in
+terms of the logical negation operation and the equality operation.</p>
+
+<h6>EqualTo</h6>
+<p>$\mathtt{EqualTo}$ computes wether two values are equal where the value top of the stack is  the
+second operand, the value below it the first operand. If there are less than two values on      the
+stack, an $\mathtt{InvalidOperation}$ error is raised. The first operand and the second operand are
+popped from the stack and the result of the comparison is pushed.</p>
+
+<p>If two values are compared, first their types are compared. If the types are equal, then  their
+values are compared.  Aggregates, foreign function, and foreign objects are compared by reference,
+strings are equal if they represent the same sequence of Bytes, numbers and boolean values     are
+equal if they represent the same mathematical value. The void value is equal to itself.</p>
+<p>
+\(
+\mathtt{EqualTo}\;
+\begin{matrix}
+{\Sigma_1}.InstructionIndex = i\;\;
+{\Sigma_1}.Stack = \left[x, y\right] \circ w\;\;
+x, y \in Types\\
+\hline
+{\Sigma_2}.InstructionIndex = i + 1\;\;
+{\Sigma_2}.Stack = \left[x == y\right] \circ w\;\;
+z \in Boolean
+\end{matrix}
+\)
+</p>
+</div>
+</html>

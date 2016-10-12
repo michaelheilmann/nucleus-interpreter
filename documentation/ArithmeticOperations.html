@@ -1,0 +1,102 @@
+<DOCTYPE html>
+<html>
+<div>
+<h4>Arithmetic Operations</h4>
+<h5>Additive Arithmetic Operations</h5>
+<p>The two additive arithmetic operations are $\mathtt{Add}$ which computes the sum of two numeric
+values and $\mathtt{Subtract}$ which computes the difference of two numeric values.</p>
+
+<h6>Add</h6>
+<p>$\mathtt{Add}$ computes the sum of two numeric   values
+where the value on the top of the stack is the  addend,
+the value below it the augend. If there are less   than
+two values on the stack or they are not numeric values,
+an $\mathtt{InvalidOperation}$ error is raised.
+The augend and the addend are both popped from the stack and the sum is pushed on the stack.
+</p>
+<p>
+\(
+\mathtt{Add}\;
+\begin{matrix}
+{\Sigma_1}.InstructionIndex = i\;\;
+{\Sigma_1}.Stack = \left[x, y\right] \circ w \;\;
+x, y \in Number\\
+\hline
+{\Sigma_2}.InstructionIndex = i+ 1\;\;
+{\Sigma_2}.Stack = \left[x + y\right] \circ w \;\;
+z \in Number
+\end{matrix}
+\)
+</p
+
+<h6>Subtract</h6>
+<p>$\mathtt{Subtract}$ computes the difference of two numeric   values
+where the value on the top of the stack is the  subtrahend,
+the value below it is the minuend. If there are less   than
+two values on the stack or they are not numeric values,
+an $\mathtt{InvalidOperation}$ error is raised.
+The minuend and the subtrahend are both popped from the stack and the difference is pushed on the stack.
+<p>
+\(
+\mathtt{Subtract}\;
+\begin{matrix}
+{\Sigma_1}.InstructionIndex = i\;\;
+{\Sigma_1}.Stack = \left[x, y\right] \circ w\;\;
+x, y \in Number\\
+\hline
+{\Sigma_2}.InstructionIndex = i+ 1\;\;
+{\Sigma_2}.Stack = \left[x - y\right] \circ w\;\;
+z \in Number
+\end{matrix}
+\)
+</p>
+
+<h5>Multiplicative Arithmetic Operations</h5>
+<p>The two multiplicative arithmetic operations are $\mathtt{Multiply}$ which computes the product
+of two numeric values and $\mathtt{Divide}$ which computes the quotient of two numeric values.</p>
+
+<h6>Multiply</h6>
+<p>$\mathtt{Multiply}$ computes the product of two numeric   values
+where the value on the top of the stack is the  multiplier,
+the value below it is the multiplicand. If there are less   than
+two values on the stack or they are not numeric values,
+an $\mathtt{InvalidOperation}$ error is raised.
+The multiplicand and the multiplier are both popped from the stack and the product is pushed on the stack.
+</p>
+<p>
+\(
+\mathtt{Multiply}\;
+\begin{matrix}
+{\Sigma_1}.InstructionIndex = i\;\;
+{\Sigma_1}.Stack = \left[x, y\right] \circ w \;\;
+x, y \in Number\\
+\hline
+{\Sigma_2}.InstructionIndex = i+ 1\;\;
+{\Sigma_2}.Stack = \left[x \cdot y\right] \circ w \;\;
+z \in Number
+\end{matrix}
+\)
+
+<h6>Divide</h6>
+<p>$\mathtt{Subtract}$ computes the quotient of two numeric   values
+where the value on the top of the stack is the  divisor,
+the value below it is the dividend. If there are less   than
+two values on the stack or they are not numeric values,
+an $\mathtt{InvalidOperation}$ error is raised.
+The dividend and the divisor are both popped from the stack and the quotient is pushed on the stack.
+</p>
+<p>
+\(
+\mathtt{Divide}\;
+\begin{matrix}
+{\Sigma_1}.InstructionIndex = i\;\;
+{\Sigma_1}.Stack = \left[x, y\right] \circ w\;\;
+x, y \in Number\\
+\hline
+{\Sigma_2}.InstructionIndex = i+ 1\;\;
+{\Sigma_2}.Stack = \left[x / y\right] \circ w\;\;
+z \in Number
+\end{matrix}
+\)
+</div>
+</html>

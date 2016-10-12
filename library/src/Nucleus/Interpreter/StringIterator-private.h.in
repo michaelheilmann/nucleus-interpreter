@@ -1,0 +1,59 @@
+#pragma once
+
+#include "Nucleus/Interpreter/StringIterator.h"
+
+#include "Nucleus/Interpreter/Context.h"
+#include "Nucleus/Interpreter/Object.h"
+#include "Nucleus/Interpreter/String.h"
+#include "Nucleus/Interpreter/Symbol.h"
+
+static Nucleus_Interpreter_Type *g_type = NULL;
+
+Nucleus_Interpreter_NonNull() static void
+visit
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringIterator *self
+    );
+
+Nucleus_Interpreter_NonNull() static void
+finalizeType
+    (
+        Nucleus_Interpreter_GC *gc,
+        Nucleus_Interpreter_Type *type
+    );
+
+Nucleus_Interpreter_ReturnNonNull() Nucleus_Interpreter_NonNull() static Nucleus_Interpreter_Type *
+getOrCreateType
+    (
+        Nucleus_Interpreter_Context *context
+    );
+
+Nucleus_Interpreter_NonNull() static size_t
+beginOffset
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringIterator *stringIterator
+    );
+
+Nucleus_Interpreter_NonNull() static size_t
+endOffset
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringIterator *stringIterator
+    );
+
+Nucleus_Interpreter_NonNull() static void
+updateSymbol
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringIterator *stringIterator
+    );
+
+struct Nucleus_Interpreter_StringIterator
+{
+    Nucleus_Interpreter_GC_Object __parent;
+    Nucleus_Interpreter_String *string;
+    Nucleus_Interpreter_Symbol symbol;
+    size_t offset;
+}; // struct Nucleus_Interpreter_StringIterator

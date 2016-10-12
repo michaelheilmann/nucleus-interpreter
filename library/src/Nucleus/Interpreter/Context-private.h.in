@@ -1,0 +1,25 @@
+// Copyright (c) Michael Heilmann 2018
+#pragma once
+
+#include "Nucleus/Interpreter/Context.h"
+
+struct Nucleus_Interpreter_ScratchSpace
+{
+    Nucleus_Interpreter_ScratchSpace *next;
+    size_t numberOfBytes;
+    char bytes[];
+}; // struct Nucleus_Interpreter_ScratchSpace
+
+Nucleus_Interpreter_NonNull() static Nucleus_Interpreter_ScratchSpace *
+Nucleus_Interpreter_ScratchSpace_create
+    (
+        Nucleus_Interpreter_Context *context,
+        size_t numberOfBytes
+    );
+
+Nucleus_Interpreter_NonNull() static void
+Nucleus_Interpreter_ScratchSpace_destroy
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_ScratchSpace *scratchSpace
+    );
