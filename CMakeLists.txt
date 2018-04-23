@@ -27,6 +27,7 @@ endif()
 # Add module "Nucleus".
 if (NOT NUCLEUS_INCLUDED)
   add_subdirectory(${NUCLEUS_PATH})
+  set(NUCLEUS_INCLUDED YES)
 endif()
 
 # Add module "tools".
