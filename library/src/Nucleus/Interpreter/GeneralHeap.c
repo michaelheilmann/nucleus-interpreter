@@ -2,7 +2,7 @@
 #include "Nucleus/Interpreter/GeneralHeap.h"
 
 #include "Nucleus/Interpreter/GC/Object.h"
-#include "Nucleus/Interpreter/GC/Type.h"
+#include "Nucleus/Interpreter/TS.h"
 #include "Nucleus/Interpreter/Context.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -56,10 +56,10 @@ sweep
     while (generalHeap->objects)
     {
         Nucleus_Interpreter_GC_Tag *tag = generalHeap->objects; generalHeap->objects = tag->next;
-        Nucleus_Interpreter_GC_Type *type = Nucleus_Interpreter_GC_Tag_getType(context, tag);
+        Nucleus_Interpreter_Type *type = Nucleus_Interpreter_GC_Tag_getType(context, tag);
         if (type)
         {
-            if (Nucleus_Interpreter_GC_Type_isForeign(type))
+            if (Nucleus_Interpreter_isForeignType(type))
             {
                 if (type->foreignType.finalizeForeignObject)
                 {
@@ -67,7 +67,7 @@ sweep
                 }
                 Nucleus_Interpreter_ProcessContext_deallocate(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), tag);
             }
-            else if (Nucleus_Interpreter_GC_Type_isArray(type))
+            else if (Nucleus_Interpreter_isArrayType(type))
             {
                 Nucleus_Interpreter_GC_ArrayTag *arrayTag = tag2ArrayTag(tag);
                 Nucleus_Interpreter_ProcessContext_deallocate(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), arrayTag);

@@ -5,6 +5,7 @@
 #include "Nucleus/Interpreter/Annotations.h"
 #include "Nucleus/Interpreter/Status.h"
 #include "Nucleus/Interpreter/GC.h"
+#include "Nucleus/Interpreter/TS.h"
 #include <stddef.h> /// @todo For size_t. Remove this.
 
 // Forward declaration.
@@ -33,7 +34,9 @@ struct Nucleus_Interpreter_ProcessContext
     /// @brief The status variable of this context.
     /// Default value is Nucleus_Language_FeatureLevelOne_Status_Success.
     Nucleus_Interpreter_Status status;
-    /// @brief The garbage collector.
+    /// @brief The type system (TS).
+    Nucleus_Interpreter_TS ts;
+    /// @brief The garbage collector (GC).
     Nucleus_Interpreter_GC gc;
 }; // struct Nucleus_Interpreter_ProcessContext
 

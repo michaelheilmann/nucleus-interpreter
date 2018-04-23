@@ -1,0 +1,19 @@
+#pragma once
+
+#include "Nucleus/Interpreter/TS.h"
+
+#include "Nucleus/Memory.h"
+#include "Nucleus/Hash/Natural.h"
+#include "Nucleus/Hash/Pointer.h"
+#include "Nucleus/Hash/Size.h"
+#include "Nucleus/Hash/combineHashValues.h"
+
+static const Nucleus_Size greatestCapacity = Nucleus_Size_Greatest / sizeof(Nucleus_Interpreter_Type *);
+
+static const Nucleus_Size leastCapacity = 8;
+
+Nucleus_Interpreter_NonNull() static void
+maybeResize
+    (
+        Nucleus_Interpreter_TS *ts
+    );
