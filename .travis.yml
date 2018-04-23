@@ -72,3 +72,12 @@ script:
 - cd "${TRAVIS_BUILD_DIR}"
 # Run "make all" and "make test".
 - make all && make test
+
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/deeca47d07972d6be9c3
+      - https://webhooks.gitter.im/e/b8067a6aaf118ec7e6a1
+    on_success: always  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: never     # options: [always|never|change] default: always

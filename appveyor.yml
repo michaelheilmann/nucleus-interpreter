@@ -50,3 +50,7 @@ notifications:
       url: https://webhooks.gitter.im/e/67a33a6f4bd5721610a7
       on_build_success: true
       on_build_failure: true
+    - provider: Webhook
+      url: https://webhooks.gitter.im/e/a297dd8f123c4b60a3ca
+      on_build_success: true
+      on_build_failure: true
