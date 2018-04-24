@@ -126,13 +126,13 @@ Nucleus_Interpreter_GC_allocateManaged
     (
         Nucleus_Interpreter_GC *gc,
         Nucleus_Interpreter_GC_Tag **tag,
-        size_t size,
+        Nucleus_Size size,
         Nucleus_Interpreter_GC_Tag **list
     )
 {
-    if (!tag || !list) return Nucleus_Interpreter_Status_InvalidArgument;
+    if (Nucleus_Unlikely(!tag || !list)) return Nucleus_Interpreter_Status_InvalidArgument;
     Nucleus_Interpreter_GC_Tag *tag1;
-    if (SIZE_MAX - sizeof(Nucleus_Interpreter_GC_Tag) < size)
+    if (Nucleus_Size_Greatest - sizeof(Nucleus_Interpreter_GC_Tag) < size)
     {
         return Nucleus_Interpreter_Status_Overflow;
     }
@@ -154,7 +154,7 @@ Nucleus_Interpreter_GC_allocateManagedArray
     (
         Nucleus_Interpreter_GC *gc,
         Nucleus_Interpreter_GC_Tag **tag,
-        size_t numberOfElements,
+        Nucleus_Size numberOfElements,
         Nucleus_Interpreter_Type *arrayType,
         Nucleus_Interpreter_GC_Tag **list
     )
@@ -163,10 +163,10 @@ Nucleus_Interpreter_GC_allocateManagedArray
     { return Nucleus_Interpreter_Status_InvalidArgument; }
     Nucleus_Status nucleusStatus;
     // Compute the tag size in Bytes.
-    size_t tagSizeInBytes = sizeof(Nucleus_Interpreter_GC_ArrayTag) + sizeof(Nucleus_Interpreter_GC_Tag);
+    Nucleus_Size tagSizeInBytes = sizeof(Nucleus_Interpreter_GC_ArrayTag) + sizeof(Nucleus_Interpreter_GC_Tag);
     // Compute the element size in Bytes.
     Nucleus_Interpreter_Type *elementType = arrayType->arrayType.elementType;
-    size_t elementSizeInBytes;
+    Nucleus_Size elementSizeInBytes;
     if (Nucleus_Interpreter_isArrayType(elementType) || Nucleus_Interpreter_isForeignType(elementType))
     {
         elementSizeInBytes = sizeof(void *);
@@ -176,7 +176,7 @@ Nucleus_Interpreter_GC_allocateManagedArray
         elementSizeInBytes = elementType->basicType.size;
     }
     // Compute the array size in Bytes.
-    size_t arraySizeInBytes;
+    Nucleus_Size arraySizeInBytes;
     nucleusStatus = Nucleus_safeMul(elementSizeInBytes, numberOfElements, &arraySizeInBytes);
     if (nucleusStatus) 
     {
@@ -189,9 +189,9 @@ Nucleus_Interpreter_GC_allocateManagedArray
         };
     };
     // Compute the allocation size in Bytes.
-    size_t sizeInBytes;
+    Nucleus_Size sizeInBytes;
     nucleusStatus = Nucleus_safeAdd(tagSizeInBytes, arraySizeInBytes, &sizeInBytes);
-    if (nucleusStatus) 
+    if (Nucleus_Unlikely(nucleusStatus)) 
     {
         switch (nucleusStatus)
         {
@@ -204,7 +204,7 @@ Nucleus_Interpreter_GC_allocateManagedArray
 
     Nucleus_Interpreter_GC_Tag *tag1;
     Nucleus_Interpreter_Status status = Nucleus_Interpreter_GC_allocate(gc, (void **)&tag1, sizeInBytes);
-    if (status) return status;
+    if (Nucleus_Unlikely(status)) return status;
     Nucleus_Interpreter_GC_Tag_setWhite(tag1);
     tag1->next = *list; *list = tag1;
     *tag = tag1;
