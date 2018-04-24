@@ -19,7 +19,7 @@
 
 // Forward declarations.
 typedef struct Nucleus_Interpreter_GC Nucleus_Interpreter_GC;
-typedef struct Nucleus_Interpreter_GC_Type Nucleus_Interpreter_GC_Type;
+typedef struct Nucleus_Interpreter_Type Nucleus_Interpreter_Type;
 typedef struct Nucleus_Interpreter_Context Nucleus_Interpreter_Context;
 
 
@@ -54,7 +54,7 @@ struct Nucleus_Interpreter_GC_Tag
     char flags;
     Nucleus_Size lockCount;
     Nucleus_Interpreter_GC_Tag *gray;
-    Nucleus_Interpreter_GC_Type *type;
+    Nucleus_Interpreter_Type *type;
 }; // struct Nucleus_Interpreter_GC_Tag
 
 // The tag with which the GC prefixes allocated array memory.
@@ -116,7 +116,7 @@ Nucleus_Interpreter_GC_Tag_isLocked
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-Nucleus_Interpreter_NoError() Nucleus_Interpreter_NonNull() Nucleus_Interpreter_GC_Type *
+Nucleus_Interpreter_NoError() Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Type *
 Nucleus_Interpreter_GC_Tag_getType
     (
         Nucleus_Interpreter_Context *context,
@@ -128,7 +128,7 @@ Nucleus_Interpreter_GC_Tag_setType
     (
         Nucleus_Interpreter_Context *context,
         Nucleus_Interpreter_GC_Tag *tag,
-        Nucleus_Interpreter_GC_Type *type
+        Nucleus_Interpreter_Type *type
     );
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -186,6 +186,6 @@ Nucleus_Interpreter_GC_allocateManagedArray
         Nucleus_Interpreter_GC *gc,
         Nucleus_Interpreter_GC_Tag **tag,
         size_t numberOfElements,
-        Nucleus_Interpreter_GC_Type *arrayType,
+        Nucleus_Interpreter_Type *arrayType,
         Nucleus_Interpreter_GC_Tag **list
     );

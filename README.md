@@ -16,13 +16,13 @@ Change the directory to the directory of this file.
 
 Enter
 ```
-cmake -a Win32 CMakeLists.txt
+cmake -G "Visual Studio 15 2017" CMakeLists.txt
 ```
 to generate the project files for Win32.
 
 Enter
 ```
-cmake -a x64 CMakeLists.txt
+cmake -G "Visual Studio 15 2017 Win64" CMakeLists.txt
 ```
 to generate the project files for x64.
 

@@ -7,8 +7,8 @@
 #include <assert.h>
 #include "Nucleus/Memory.h" /// @todo Remove this.
 #include "Nucleus/Interpreter/GC/Object.h"
-#include "Nucleus/Interpreter/GC/Type.h"
 #include "Nucleus/Interpreter/GC/OnVisit.h"
+#include "Nucleus/Interpreter/TS.h"
 #include "Nucleus/Interpreter/JumpTarget.h"
 
 Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Status

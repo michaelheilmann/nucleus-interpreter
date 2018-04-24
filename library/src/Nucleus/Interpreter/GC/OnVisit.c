@@ -1,7 +1,7 @@
 #include "Nucleus/Interpreter/GC/OnVisit.h"
 
+#include "Nucleus/Interpreter/TS.h"
 #include "Nucleus/Interpreter/GC/Object.h"
-#include "Nucleus/Interpreter/GC/Type.h"
 #include "Nucleus/Interpreter/GC/Heap.h"
 #include "Nucleus/Interpreter/Context.h"
 
@@ -33,9 +33,9 @@ onMarkArray
     )
 {
     Nucleus_Interpreter_GC *gc = &(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context)->gc);
-    Nucleus_Interpreter_GC_Type *type = Nucleus_Interpreter_GC_Tag_getType(context, tag);
-    Nucleus_Interpreter_GC_Type *elementType = type->arrayType.elementType;
-    if (Nucleus_Interpreter_GC_Type_isArray(elementType) || Nucleus_Interpreter_GC_Type_isForeign(elementType))
+    Nucleus_Interpreter_Type *type = Nucleus_Interpreter_GC_Tag_getType(context, tag);
+    Nucleus_Interpreter_Type *elementType = type->arrayType.elementType;
+    if (Nucleus_Interpreter_isArrayType(elementType) || Nucleus_Interpreter_isForeignType(elementType))
     {
         void **elements =  tag2Address(tag);
         for (size_t i = 0, n = tag2ArrayTag(tag)->length; i < n; ++i)
@@ -64,7 +64,7 @@ onMarkForeignObject
     )
 {
     Nucleus_Interpreter_GC *gc = &(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context)->gc);
-    Nucleus_Interpreter_GC_Type *type = Nucleus_Interpreter_GC_Tag_getType(context, tag);
+    Nucleus_Interpreter_Type *type = Nucleus_Interpreter_GC_Tag_getType(context, tag);
     do
     {
         if (type->foreignType.visitForeignObject)
@@ -93,14 +93,14 @@ onMark
     while (gc->gray)
     {
         Nucleus_Interpreter_GC_Tag *tag = gc->gray; gc->gray = tag->gray;
-        Nucleus_Interpreter_GC_Type *type = Nucleus_Interpreter_GC_Tag_getType(context, tag);
+        Nucleus_Interpreter_Type *type = Nucleus_Interpreter_GC_Tag_getType(context, tag);
         if (type)
         {
-            if (Nucleus_Interpreter_GC_Type_isArray(type))
+            if (Nucleus_Interpreter_isArrayType(type))
             {
                 onMarkArray(context, tag);
             }
-            else if (Nucleus_Interpreter_GC_Type_isForeign(type))
+            else if (Nucleus_Interpreter_isForeignType(type))
             {
                 onMarkForeignObject(context, tag);
             }

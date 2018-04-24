@@ -1,0 +1,45 @@
+#include "Nucleus/Interpreter/TS-private.h.in"
+
+Nucleus_NonNull() static void
+maybeResize
+    (
+        Nucleus_Interpreter_TS *ts
+    )
+{
+    if (ts->size >= ts->capacity/2 && ts->capacity < greatestCapacity)
+    {
+        Nucleus_Size oldCapacity = ts->capacity;
+        Nucleus_Size newCapacity = oldCapacity;
+        if (newCapacity < greatestCapacity / 2)
+        {
+            newCapacity *= 2;
+        }
+        else
+        {
+            newCapacity = greatestCapacity;
+        }
+        Nucleus_Interpreter_Type **oldBuckets = ts->buckets;
+        Nucleus_Interpreter_Type **newBuckets;
+        Nucleus_Status status = Nucleus_allocateArrayMemory((void **)&newBuckets, newCapacity,
+                                                            sizeof(Nucleus_Interpreter_Type *));
+        if (status) return;
+        for (size_t i = 0, n = newCapacity; i < n; ++i)
+        {
+            newBuckets[i] = NULL;
+        }
+        for (size_t i = 0, n = oldCapacity; i < n; ++i)
+        {
+            Nucleus_Interpreter_Type **oldBucket = &(oldBuckets[i]);
+            while (*oldBucket)
+            {
+                Nucleus_Interpreter_Type *node = *oldBucket; *oldBucket = node->next;
+                Nucleus_Size newHashIndex = node->hashValue % newCapacity;
+                node->next = newBuckets[newHashIndex];
+                newBuckets[newHashIndex] = node;
+            }
+        }
+        Nucleus_deallocateMemory(oldBuckets);
+        ts->buckets = newBuckets;
+        ts->capacity = newCapacity;
+    }
+}

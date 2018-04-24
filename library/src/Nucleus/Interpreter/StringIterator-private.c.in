@@ -8,11 +8,9 @@ visit
     )
 {}
 
-Nucleus_Interpreter_NonNull() static void
+Nucleus_Interpreter_NoError() static void
 finalizeType
     (
-        Nucleus_Interpreter_GC *gc,
-        Nucleus_Interpreter_Type *type
     )
 { g_type = NULL; }
 
@@ -28,7 +26,7 @@ getOrCreateType
                     (
                         context,
                         NULL,
-                        NUCLEUS_INTERPRETER_OBJECT_VISIT(&visit),
+                        NUCLEUS_INTERPRETER_VISITFOREIGNOBJECT(&visit),
                         NUCLEUS_INTERPRETER_FINALIZETYPE(&finalizeType)
                     );
     }

@@ -16,11 +16,9 @@ visit
         Nucleus_Interpreter_StringIterator *self
     );
 
-Nucleus_Interpreter_NonNull() static void
+Nucleus_Interpreter_NoError() static void
 finalizeType
     (
-        Nucleus_Interpreter_GC *gc,
-        Nucleus_Interpreter_Type *type
     );
 
 Nucleus_Interpreter_ReturnNonNull() Nucleus_Interpreter_NonNull() static Nucleus_Interpreter_Type *

@@ -1,7 +1,7 @@
 // Copyright (c) Michael Heilmann 2018
 #include "Nucleus/Interpreter/GC/Object.h"
 #include "Nucleus/Interpreter/GC.h"
-#include "Nucleus/Interpreter/GC/Type.h"
+#include "Nucleus/Interpreter/TS.h"
 #include "Nucleus/SafeArithmeticOperations.h"
 #include <stdint.h> // For SIZE_MAX.
 
@@ -58,7 +58,7 @@ Nucleus_Interpreter_GC_Tag_isLocked
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-Nucleus_Interpreter_NoError() Nucleus_Interpreter_NonNull() Nucleus_Interpreter_GC_Type *
+Nucleus_Interpreter_NoError() Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Type *
 Nucleus_Interpreter_GC_Tag_getType
     (
         Nucleus_Interpreter_Context *context,
@@ -71,7 +71,7 @@ Nucleus_Interpreter_GC_Tag_setType
     (
         Nucleus_Interpreter_Context *context,
         Nucleus_Interpreter_GC_Tag *tag,
-        Nucleus_Interpreter_GC_Type *type
+        Nucleus_Interpreter_Type *type
     )
 { tag->type = type; }
 
@@ -155,23 +155,23 @@ Nucleus_Interpreter_GC_allocateManagedArray
         Nucleus_Interpreter_GC *gc,
         Nucleus_Interpreter_GC_Tag **tag,
         size_t numberOfElements,
-        Nucleus_Interpreter_GC_Type *arrayType,
+        Nucleus_Interpreter_Type *arrayType,
         Nucleus_Interpreter_GC_Tag **list
     )
 {
-    if (Nucleus_Unlikely(!tag || !list || !arrayType || !Nucleus_Interpreter_GC_Type_isArray(arrayType)))
+    if (Nucleus_Unlikely(!tag || !list || !arrayType || !Nucleus_Interpreter_isArrayType(arrayType)))
     { return Nucleus_Interpreter_Status_InvalidArgument; }
     Nucleus_Status nucleusStatus;
     // Compute the tag size in Bytes.
     size_t tagSizeInBytes = sizeof(Nucleus_Interpreter_GC_ArrayTag) + sizeof(Nucleus_Interpreter_GC_Tag);
     // Compute the element size in Bytes.
-    Nucleus_Interpreter_GC_Type *elementType = arrayType->arrayType.elementType;
+    Nucleus_Interpreter_Type *elementType = arrayType->arrayType.elementType;
     size_t elementSizeInBytes;
-    if (Nucleus_Interpreter_GC_Type_isArray(elementType) || Nucleus_Interpreter_GC_Type_isForeign(elementType))
+    if (Nucleus_Interpreter_isArrayType(elementType) || Nucleus_Interpreter_isForeignType(elementType))
     {
         elementSizeInBytes = sizeof(void *);
     }
-    else if (Nucleus_Interpreter_GC_Type_isBasic(elementType))
+    else if (Nucleus_Interpreter_isBasicType(elementType))
     {
         elementSizeInBytes = elementType->basicType.size;
     }

@@ -12,9 +12,22 @@ Nucleus_Interpreter_ProcessContext_initialize
     )
 {
     if (!context) return Nucleus_Interpreter_Status_InvalidArgument;
+    //
     context->status = Nucleus_Interpreter_Status_Success;
+    //
     context->jumpTargets = NULL;
-    return Nucleus_Interpreter_GC_initialize(&context->gc);
+    //
+    context->status = Nucleus_Interpreter_initializeTS(&context->ts);
+    if (context->status) return context->status;
+    //
+    context->status = Nucleus_Interpreter_initializeGC(&context->gc);
+    if (context->status)
+    {
+        Nucleus_Interpreter_uninitializeTS(&context->ts);
+        return context->status;
+    }
+    //
+    return context->status;
 }
 
 Nucleus_Interpreter_NoError() Nucleus_Interpreter_NonNull() void
@@ -23,7 +36,8 @@ Nucleus_Interpreter_ProcessContext_uninitialize
         Nucleus_Interpreter_ProcessContext *context
     )
 {
-    Nucleus_Interpreter_GC_uninitialize(&context->gc);
+    Nucleus_Interpreter_uninitializeGC(&context->gc);
+    Nucleus_Interpreter_uninitializeTS(&context->ts);
 }
 
 Nucleus_Interpreter_NoError() Nucleus_Interpreter_NonNull() void
