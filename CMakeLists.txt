@@ -20,6 +20,12 @@ if (NOT DEFINED With-Debug-Information)
       "enable/disable compilation with debug information. ON enables compilation with debug information, OFF disables compilation with debug information. Initial value is OFF." FORCE)
 endif()
 
+# Enable/disable compilation and execution of unit tests.
+# The value of this option can be set from the command-line by -Didlib-with-tests=(ON|OFF).
+option(Nucleus-Interpreter-With-Tests
+       "enable/disable compilation and execution of unit tests. ON enables compilation and execution of unit tests, OFF disables compilation and execution of unit tests. Initial value is ON."
+       ON)
+
 if (NOT NUCLEUS_PATH)
   set(NUCLEUS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/nucleus)
 endif()

@@ -63,7 +63,7 @@ typedef struct Nucleus_Interpreter_GC_ArrayTag Nucleus_Interpreter_GC_ArrayTag;
 
 struct Nucleus_Interpreter_GC_ArrayTag
 {
-    size_t length; ///< The length of the array i.e. its number of elements. @a 0 is a valid length.
+    Nucleus_Size length; ///< The length of the array i.e. its number of elements. @a 0 is a valid length.
 }; // struct Nucleus_Interpreter_GC_ArrayTag
 
 // TODO: Rename to Nucleus_Interpreter_GC_adrToTag
@@ -176,7 +176,7 @@ Nucleus_Interpreter_GC_allocateManaged
     (
         Nucleus_Interpreter_GC *gc,
         Nucleus_Interpreter_GC_Tag **tag,
-        size_t size,
+        Nucleus_Size size,
         Nucleus_Interpreter_GC_Tag **list
     );
 
@@ -185,7 +185,7 @@ Nucleus_Interpreter_GC_allocateManagedArray
     (
         Nucleus_Interpreter_GC *gc,
         Nucleus_Interpreter_GC_Tag **tag,
-        size_t numberOfElements,
+        Nucleus_Size numberOfElements,
         Nucleus_Interpreter_Type *arrayType,
         Nucleus_Interpreter_GC_Tag **list
     );

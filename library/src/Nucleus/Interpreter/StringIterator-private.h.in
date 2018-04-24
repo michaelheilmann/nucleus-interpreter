@@ -50,7 +50,6 @@ updateSymbol
 
 struct Nucleus_Interpreter_StringIterator
 {
-    Nucleus_Interpreter_GC_Object __parent;
     Nucleus_Interpreter_String *string;
     Nucleus_Interpreter_Symbol symbol;
     size_t offset;

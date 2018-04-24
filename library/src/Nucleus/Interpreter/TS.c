@@ -1,13 +1,35 @@
 #include "Nucleus/Interpreter/TS-private.c.in"
 
-Nucleus_NonNull() Nucleus_Interpreter_Status
+Nucleus_Interpreter_NoError() static Nucleus_Interpreter_Status
+allocateType
+    (
+        Nucleus_Interpreter_Type **type
+    )
+{
+    Nucleus_Status status  = Nucleus_allocateMemory((void **)type, sizeof(Nucleus_Interpreter_Type));
+    if (status)
+    {
+        switch (status)
+        {
+        case Nucleus_Status_InvalidArgument:
+            return Nucleus_Interpreter_Status_InvalidArgument;
+        case Nucleus_Status_AllocationFailed:
+            return Nucleus_Interpreter_Status_AllocationFailed;
+        default:
+            return Nucleus_Interpreter_Status_UnreachableCodeReached;
+        };
+    }
+    return Nucleus_Interpreter_Status_Success;
+}
+
+Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Status
 Nucleus_Interpreter_initializeTS
     (
         Nucleus_Interpreter_TS *ts
     )
 {
     Nucleus_Status status;
-    status = Nucleus_allocateArrayMemory((void **)&ts->buckets, 8, sizeof(Nucleus_Interpreter_Type *));
+    status = Nucleus_allocateArrayMemory((void **)&ts->buckets, leastCapacity, sizeof(Nucleus_Interpreter_Type *));
     if (status)
     {
         switch (status)
@@ -22,7 +44,7 @@ Nucleus_Interpreter_initializeTS
     }
     ts->size = 0;
     ts->capacity = leastCapacity;
-    for (size_t i = 0, n = leastCapacity; i < n; ++i)
+    for (Nucleus_Size i = 0, n = leastCapacity; i < n; ++i)
     {
         ts->buckets[i] = NULL;
     }
@@ -35,7 +57,7 @@ Nucleus_Interpreter_uninitializeTS
         Nucleus_Interpreter_TS *ts
     )
 {
-    for (size_t i = 0, n = ts->capacity; i < n; ++i)
+    for (Nucleus_Size i = 0, n = ts->capacity; i < n; ++i)
     {
         Nucleus_Interpreter_Type **bucket = &(ts->buckets[i]);
         while (*bucket)
@@ -73,7 +95,8 @@ Nucleus_Interpreter_getOrCreateArrayTypeNoError
     Nucleus_Size hashIndex = (hashValue % ts->capacity);
     for (Nucleus_Interpreter_Type *t = ts->buckets[hashIndex]; NULL != t; t = t->next)
     {
-        if (t->hashValue == hashValue && t->flags == flags && t->arrayType.elementType == elementType)
+        if (t->hashValue == hashValue && t->flags == flags && t->finalizeType == finalizeType &&
+            t->arrayType.elementType == elementType)
         {
             *type = t;
             return Nucleus_Interpreter_Status_Success;
@@ -82,19 +105,8 @@ Nucleus_Interpreter_getOrCreateArrayTypeNoError
 
     Nucleus_Interpreter_Type *t;
 
-    Nucleus_Status status  = Nucleus_allocateMemory((void **)&t, sizeof(Nucleus_Interpreter_Type));
-    if (status)
-    {
-        switch (status)
-        {
-        case Nucleus_Status_InvalidArgument:
-            return Nucleus_Interpreter_Status_InvalidArgument;
-        case Nucleus_Status_AllocationFailed:
-            return Nucleus_Interpreter_Status_AllocationFailed;
-        default:
-            return Nucleus_Interpreter_Status_UnreachableCodeReached;
-        };
-    }
+    Nucleus_Interpreter_Status status  = allocateType(&t);
+    if (status) { return status; }
 
     t->flags = flags;
     t->finalizeType = finalizeType;
@@ -134,7 +146,8 @@ Nucleus_Interpreter_getOrCreateBasicTypeNoError
     Nucleus_Size hashIndex = (hashValue % ts->capacity);
     for (Nucleus_Interpreter_Type *t = ts->buckets[hashIndex]; NULL != t; t = t->next)
     {
-        if (t->hashValue == hashValue && t->flags == flags && t->basicType.size == size)
+        if (t->hashValue == hashValue && t->flags == flags && t->finalizeType == finalizeType &&
+            t->basicType.size == size)
         {
             *type = t;
             return Nucleus_Interpreter_Status_Success;
@@ -143,19 +156,8 @@ Nucleus_Interpreter_getOrCreateBasicTypeNoError
 
     Nucleus_Interpreter_Type *t;
 
-    Nucleus_Status status  = Nucleus_allocateMemory((void **)&t, sizeof(Nucleus_Interpreter_Type));
-    if (status)
-    {
-        switch (status)
-        {
-        case Nucleus_Status_InvalidArgument:
-            return Nucleus_Interpreter_Status_InvalidArgument;
-        case Nucleus_Status_AllocationFailed:
-            return Nucleus_Interpreter_Status_AllocationFailed;
-        default:
-            return Nucleus_Interpreter_Status_UnreachableCodeReached;
-        };
-    }
+    Nucleus_Interpreter_Status status  = allocateType(&t);
+    if (status) { return status; }
 
     t->flags = flags;
     t->finalizeType = finalizeType;
@@ -204,6 +206,7 @@ Nucleus_Interpreter_getOrCreateForeignTypeNoError
     {
         if (t->hashValue == hashValue &&
             t->flags == flags &&
+            t->finalizeType == finalizeType &&
             t->foreignType.parentType == parentType &&
             t->foreignType.finalizeForeignObject == finalizeForeignObject &&
             t->foreignType.visitForeignObject == visitForeignObject)
@@ -215,19 +218,8 @@ Nucleus_Interpreter_getOrCreateForeignTypeNoError
 
     Nucleus_Interpreter_Type *t;
 
-    Nucleus_Status status  = Nucleus_allocateMemory((void **)&t, sizeof(Nucleus_Interpreter_Type));
-    if (status)
-    {
-        switch (status)
-        {
-        case Nucleus_Status_InvalidArgument:
-            return Nucleus_Interpreter_Status_InvalidArgument;
-        case Nucleus_Status_AllocationFailed:
-            return Nucleus_Interpreter_Status_AllocationFailed;
-        default:
-            return Nucleus_Interpreter_Status_UnreachableCodeReached;
-        };
-    }
+    Nucleus_Interpreter_Status status  = allocateType(&t);
+    if (status) { return status; }
 
     t->flags = flags;
     t->finalizeType = finalizeType;
