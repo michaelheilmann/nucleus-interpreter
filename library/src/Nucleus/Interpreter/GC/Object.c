@@ -122,7 +122,7 @@ Nucleus_Interpreter_GC_Tag_setWhite
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Status
-Nucleus_Interpreter_GC_allocateManaged
+Nucleus_Interpreter_GC_allocateManagedNoError
     (
         Nucleus_Interpreter_GC *gc,
         Nucleus_Interpreter_GC_Tag **tag,
@@ -150,7 +150,7 @@ Nucleus_Interpreter_GC_allocateManaged
 }
 
 Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Status
-Nucleus_Interpreter_GC_allocateManagedArray
+Nucleus_Interpreter_GC_allocateManagedArrayNoError
     (
         Nucleus_Interpreter_GC *gc,
         Nucleus_Interpreter_GC_Tag **tag,
@@ -177,7 +177,7 @@ Nucleus_Interpreter_GC_allocateManagedArray
     }
     // Compute the array size in Bytes.
     Nucleus_Size arraySizeInBytes;
-    nucleusStatus = Nucleus_safeMul(elementSizeInBytes, numberOfElements, &arraySizeInBytes);
+    nucleusStatus = Nucleus_safeMulSize(elementSizeInBytes, numberOfElements, &arraySizeInBytes);
     if (nucleusStatus) 
     {
         switch (nucleusStatus)
@@ -190,7 +190,7 @@ Nucleus_Interpreter_GC_allocateManagedArray
     };
     // Compute the allocation size in Bytes.
     Nucleus_Size sizeInBytes;
-    nucleusStatus = Nucleus_safeAdd(tagSizeInBytes, arraySizeInBytes, &sizeInBytes);
+    nucleusStatus = Nucleus_safeAddSize(tagSizeInBytes, arraySizeInBytes, &sizeInBytes);
     if (Nucleus_Unlikely(nucleusStatus)) 
     {
         switch (nucleusStatus)

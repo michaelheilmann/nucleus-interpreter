@@ -127,10 +127,10 @@ Nucleus_Interpreter_Context_allocateObject
 {
     Nucleus_Status status;
     Nucleus_Interpreter_GC_Tag *tag;
-    status = Nucleus_Interpreter_GC_allocateManaged(&NUCLEUS_INTERPRETER_PROCESSCONTEXT(context)->gc,
-                                                    &tag,
-                                                    numberOfBytes,
-                                                    &context->generalHeap.objects);
+    status = Nucleus_Interpreter_GC_allocateManagedNoError(&NUCLEUS_INTERPRETER_PROCESSCONTEXT(context)->gc,
+                                                           &tag,
+                                                           numberOfBytes,
+                                                           &context->generalHeap.objects);
     if (status)
     {
         Nucleus_Interpreter_ProcessContext_setStatus(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), status);
