@@ -14,8 +14,6 @@ else()
   include(${CMAKE_CURRENT_SOURCE_DIR}/../buildsystem/set_default_project_properties.cmake)
 endif()
 
-set_project_default_properties()
-
 # The interpreter types file.
 set(SOURCE_FILENAME "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Types.l")
 
@@ -31,9 +29,9 @@ add_custom_command(
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag.c"
     DEPENDS
-        ${SOURCE_FILENAME} Nucleus.Interpreter.Tools.Generator
+        ${SOURCE_FILENAME} Interpreter.Tools.Generator
     COMMAND
-        Nucleus.Interpreter.Tools.Generator --generator=${TAG_GENERATOR} --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag"
+        Interpreter.Tools.Generator --generator=${TAG_GENERATOR} --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag"
     COMMENT
         "Generating ${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag.c and ${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag.h from ${SOURCE_FILENAME}"
     VERBATIM
@@ -51,9 +49,9 @@ add_custom_command(
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value.h"
     DEPENDS
-        ${SOURCE_FILENAME} Nucleus.Interpreter.Tools.Generator
+        ${SOURCE_FILENAME} Interpreter.Tools.Generator
     COMMAND
-        Nucleus.Interpreter.Tools.Generator --generator=${VALUE_GENERATOR} --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value"
+        Interpreter.Tools.Generator --generator=${VALUE_GENERATOR} --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value"
     COMMENT
         "Generating ${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value.c and ${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value.h from ${SOURCE_FILENAME}"
     VERBATIM
@@ -71,9 +69,9 @@ add_custom_command(
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue.h"
     DEPENDS
-        ${SOURCE_FILENAME} Nucleus.Interpreter.Tools.Generator
+        ${SOURCE_FILENAME} Interpreter.Tools.Generator
     COMMAND
-        Nucleus.Interpreter.Tools.Generator --generator=${TAGGEDVALUE_GENERATOR} --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue"
+        Interpreter.Tools.Generator --generator=${TAGGEDVALUE_GENERATOR} --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue"
     COMMENT
         "Generating ${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue.c and ${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue.h from ${SOURCE_FILENAME}"
     VERBATIM
@@ -91,9 +89,9 @@ add_custom_command(
     OUTPUT
         ${TARGET_HEADER_FILENAME}
     DEPENDS
-        ${SOURCE_FILENAME} Nucleus.Interpreter.Tools.Unicode
+        ${SOURCE_FILENAME} Interpreter.Tools.Unicode
     COMMAND
-        Nucleus.Interpreter.Tools.Unicode --generator=Header --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} ${TARGET_HEADER_FILENAME}
+        Interpreter.Tools.Unicode --generator=Header --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} ${TARGET_HEADER_FILENAME}
     COMMENT
         "Generating ${TARGET_HEADER_FILENAME} from ${SOURCE_FILENAME}"
     VERBATIM
@@ -108,9 +106,9 @@ add_custom_command(
     OUTPUT
         ${TARGET_INLAY_FILENAME}
     DEPENDS
-        ${SOURCE_FILENAME} Nucleus.Interpreter.Tools.Unicode
+        ${SOURCE_FILENAME} Interpreter.Tools.Unicode
     COMMAND
-        Nucleus.Interpreter.Tools.Unicode --generator=Inlay --prefix= ${SOURCE_FILENAME} ${TARGET_INLAY_FILENAME}
+        Interpreter.Tools.Unicode --generator=Inlay --prefix= ${SOURCE_FILENAME} ${TARGET_INLAY_FILENAME}
     COMMENT
         "Generating ${TARGET_INLAY_FILENAME} from ${SOURCE_FILENAME}"
     VERBATIM
@@ -131,7 +129,8 @@ add_library(Nucleus.Interpreter.Library STATIC ${SOURCE_FILES} ${HEADER_FILES})
 target_link_libraries(Nucleus.Interpreter.Library Nucleus.Library)
 target_include_directories(Nucleus.Interpreter.Library PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_include_directories(Nucleus.Interpreter.Library INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/src")
-
+# Set its properties.
+set_project_default_properties(Nucleus.Interpreter.Library)
 
 IF(DOXYGEN_FOUND)
     ADD_CUSTOM_TARGET(Nucleus.Interpreter.Library.Documentation ${DOXYGEN_EXECUTABLE} COMMENT "Building documentation")

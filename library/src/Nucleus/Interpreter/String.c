@@ -8,23 +8,23 @@
 #include "Nucleus/Hash/Memory.h"
 #include "Nucleus/Memory.h"
 
-Nucleus_Interpreter_NonNull() static unsigned int
+Nucleus_Interpreter_NonNull() static Nucleus_HashValue
 Nucleus_Interpreter_hashMemory
     (
         Nucleus_Interpreter_Context *context,
         const void *p,
-        size_t n
+        Nucleus_Size n
     );
 
-Nucleus_Interpreter_NonNull() static unsigned int
+Nucleus_Interpreter_NonNull() static Nucleus_HashValue
 Nucleus_Interpreter_hashMemory
     (
         Nucleus_Interpreter_Context *context,
         const void *p,
-        size_t n
+        Nucleus_Size n
     )
 {
-    unsigned int hv;
+    Nucleus_HashValue hv;
     Nucleus_hashMemory(p, n, &hv);
     return hv;
 }
@@ -32,8 +32,8 @@ Nucleus_Interpreter_hashMemory
 typedef struct LookupResult
 {
     Nucleus_Interpreter_String *string;
-    size_t hashValue;
-    size_t hashIndex;
+    Nucleus_HashValue hashValue;
+    Nucleus_Size hashIndex;
 } LookupResult;
 
 Nucleus_Interpreter_NonNull() static LookupResult
@@ -42,11 +42,11 @@ lookup
         Nucleus_Interpreter_Context *context,
         Nucleus_Interpreter_StringHeap *stringHeap,
         const char *bytes,
-        size_t numberOfBytes
+        Nucleus_Size numberOfBytes
     )
 {
-    unsigned int hashValue = Nucleus_Interpreter_hashMemory(context, bytes, numberOfBytes);
-    unsigned int hashIndex = hashValue % stringHeap->capacity;
+    Nucleus_HashValue hashValue = Nucleus_Interpreter_hashMemory(context, bytes, numberOfBytes);
+    Nucleus_HashValue hashIndex = hashValue % stringHeap->capacity;
     for (Nucleus_Interpreter_GC_Tag *tag = stringHeap->buckets[hashIndex]; NULL != tag; tag = tag->next)
     {
         Nucleus_Interpreter_String *string = tag2Address(tag);
@@ -68,7 +68,7 @@ create
     (
         Nucleus_Interpreter_Context *context,
         const char *bytes,
-        size_t numberOfBytes,
+        Nucleus_Size numberOfBytes,
         LookupResult *lookupResult
     );
 
@@ -77,16 +77,21 @@ create
     (
         Nucleus_Interpreter_Context *context,
         const char *bytes,
-        size_t numberOfBytes,
+        Nucleus_Size numberOfBytes,
         LookupResult *lookupResult
     )
 {
     Nucleus_Interpreter_GC_Tag *tag;
     Nucleus_Interpreter_Status status;
-    status = Nucleus_Interpreter_GC_allocateManaged(&NUCLEUS_INTERPRETER_PROCESSCONTEXT(context)->gc,
-                                                    &tag,
-                                                    sizeof(Nucleus_Interpreter_String) + numberOfBytes,
-                                                    &context->stringHeap.buckets[lookupResult->hashIndex]);
+    status = Nucleus_Interpreter_GC_allocateManagedNoError(&NUCLEUS_INTERPRETER_PROCESSCONTEXT(context)->gc,
+                                                           &tag,
+                                                           sizeof(Nucleus_Interpreter_String) + numberOfBytes,
+                                                           &context->stringHeap.buckets[lookupResult->hashIndex]);
+    if (status)
+    {
+        Nucleus_Interpreter_ProcessContext_setStatus(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), status);
+        Nucleus_Interpreter_ProcessContext_jump(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context));
+    }
     Nucleus_Interpreter_String *string = tag2Address(tag);
     string->numberOfBytes = numberOfBytes;
     string->hashValue = lookupResult->hashValue;
@@ -100,7 +105,7 @@ Nucleus_Interpreter_String_create
     (
         Nucleus_Interpreter_Context *context,
         const char *bytes,
-        size_t numberOfBytes
+        Nucleus_Size numberOfBytes
     )
 {
     Nucleus_Interpreter_Context_assertNotNull(context, bytes);
@@ -112,7 +117,7 @@ Nucleus_Interpreter_String_create
     return lookupResult.string;
 }
 
-Nucleus_Interpreter_NonNull() bool
+Nucleus_Interpreter_NonNull() Nucleus_Boolean
 Nucleus_Interpreter_String_equalTo
     (
         Nucleus_Interpreter_Context *context,
@@ -135,7 +140,7 @@ Nucleus_Interpreter_String_concatenate
 {
     Nucleus_Interpreter_Context_assertNotNull(context, first);
     Nucleus_Interpreter_Context_assertNotNull(context, second);
-    size_t numberOfBytes = first->numberOfBytes + second->numberOfBytes;
+    Nucleus_Size numberOfBytes = first->numberOfBytes + second->numberOfBytes;
     char *bytes = Nucleus_Interpreter_Context_acquireScratchSpace(context, numberOfBytes);
     Nucleus_copyMemory(bytes + 0, first->bytes, first->numberOfBytes);
     Nucleus_copyMemory(bytes + first->numberOfBytes, second->bytes, second->numberOfBytes);
@@ -159,7 +164,7 @@ Nucleus_Interpreter_String_concatenate
     return lookupResult.string;
 }
 
-Nucleus_Interpreter_NonNull() size_t
+Nucleus_Interpreter_NonNull() Nucleus_Size
 Nucleus_Interpreter_String_getNumberOfBytes
     (
         Nucleus_Interpreter_Context *context,

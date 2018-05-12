@@ -172,7 +172,7 @@ Nucleus_Interpreter_GC_Tag_setWhite
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Status
-Nucleus_Interpreter_GC_allocateManaged
+Nucleus_Interpreter_GC_allocateManagedNoError
     (
         Nucleus_Interpreter_GC *gc,
         Nucleus_Interpreter_GC_Tag **tag,
@@ -181,7 +181,7 @@ Nucleus_Interpreter_GC_allocateManaged
     );
 
 Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Status
-Nucleus_Interpreter_GC_allocateManagedArray
+Nucleus_Interpreter_GC_allocateManagedArrayNoError
     (
         Nucleus_Interpreter_GC *gc,
         Nucleus_Interpreter_GC_Tag **tag,

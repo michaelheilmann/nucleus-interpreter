@@ -4,8 +4,9 @@
 cmake_minimum_required (VERSION 3.8)
 
 # Project.
-project(Nucleus.Interpreter.Tools.Generator C)
-message("building Nucleus.Interpreter.Tools.Generator")
+set(PROJECT_NAME "Interpreter.Tools.Generator")
+project(${PROJECT_NAME} C)
+message("building ${PROJECT_NAME}")
 
 if (NUCLEUS_PATH)
   include(${NUCLEUS_PATH}/buildsystem/detect_compiler_and_platform.cmake)
@@ -14,8 +15,6 @@ else()
   include(${CMAKE_CURRENT_SOURCE_DIR}/../buildsystem/detect_compiler_and_platform.cmake)
   include(${CMAKE_CURRENT_SOURCE_DIR}/../buildsystem/set_default_project_properties.cmake)
 endif()
-
-set_project_default_properties()
 
 # Find and configure source files.
 file(GLOB_RECURSE SOURCE_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/*.c")
@@ -26,6 +25,8 @@ set_source_files_properties(${HEADER_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
 file(GLOB_RECURSE INLAY_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/*.i")
 set_source_files_properties(${INLAY_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
 # Add and configure executable.
-add_executable(Nucleus.Interpreter.Tools.Generator ${SOURCE_FILES} ${HEADER_FILES} ${INLAY_FILES})
-target_include_directories(Nucleus.Interpreter.Tools.Generator PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
-target_link_libraries(Nucleus.Interpreter.Tools.Generator Nucleus.Library)
+add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} ${INLAY_FILES})
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_link_libraries(${PROJECT_NAME} Nucleus.Library)
+# Set its properties.
+set_project_default_properties(${PROJECT_NAME})

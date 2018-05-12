@@ -3,8 +3,8 @@
 #pragma once
 
 #include "Nucleus/Interpreter/Annotations.h"
-#include <stdbool.h> /// @todo for bool. Remove this.
-#include <stddef.h> /// @todo For size_t. Remove this.
+#include "Nucleus/Types/Boolean.h"
+#include "Nucleus/Types/Size.h"
 
 // Forward declaration.
 typedef struct Nucleus_Interpreter_Context Nucleus_Interpreter_Context;
@@ -32,10 +32,10 @@ Nucleus_Interpreter_String_create
     (
         Nucleus_Interpreter_Context *context,
         const char *bytes,
-        size_t numberOfBytes
+        Nucleus_Size numberOfBytes
     );
 
-Nucleus_Interpreter_NonNull() bool
+Nucleus_Interpreter_NonNull() Nucleus_Boolean
 Nucleus_Interpreter_String_equalTo
     (
         Nucleus_Interpreter_Context *context,
@@ -56,7 +56,7 @@ Nucleus_Interpreter_String_concatenate
 /// @param string a pointer to an @a Nucleus_Interpreter_String object
 /// @return the number of Bytes of the atom
 /// @failure @a *status is assigned a status code denoting the reason for the failure, then @a longjmp(*environment, -1) is invoked
-Nucleus_Interpreter_NonNull() size_t
+Nucleus_Interpreter_NonNull() Nucleus_Size
 Nucleus_Interpreter_String_getNumberOfBytes
     (
         Nucleus_Interpreter_Context *context,
