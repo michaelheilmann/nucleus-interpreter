@@ -1,4 +1,4 @@
-# Copyright (c) Michael Heilmann 2017, 2018
+# Copyright (c) 2017, 2018 Michael Heilmann
 
 # Minimum required CMake version.
 cmake_minimum_required (VERSION 3.8)

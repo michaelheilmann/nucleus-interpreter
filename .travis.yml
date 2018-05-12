@@ -1,55 +1,89 @@
-# Copyright (c) 2017 Michael Heilmann
+# Copyright (c) 2017, 2018 Michael Heilmann
 
 # Require sudo (to install software).
 sudo: required
 # Select Ubuntu 'Trusty'.
 dist: trusty
+# Select language C.
+language: c
+
+# Compile once for Linux and once for OS X.
+os:
+    - linux
+    - osx
 
 # Compile once for Clang and once for GCC.
 compiler:
     - clang
     - gcc
     
-addons:
-    apt:
-        sources:
-            # add PPAs with more up-to-date toolchains
-            - ubuntu-toolchain-r-test
-            - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.8 main'
-              key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
-        packages:
-            # GCC 6
-            - gcc-6
-            - g++-6
-            # CLANG 3.8
-            - clang-3.8
-            #- libc++-dev
-            # PhysFS
-            #- libphysfs-dev
-            # SDL 2
-            #- libsdl2-dev
-            #- libsdl2-image-dev
-            #- libsdl2-mixer-dev
-            #- libsdl2-ttf-dev
-            # CMake (outdated)
-            - cmake
-            
+matrix:
+    # Remove default jobs.
+    exclude:
+        - compiler: gcc
+        - compiler: clang
+    # Add non-default jobs.
+    include:
+        - compiler: gcc
+          os: linux
+          addons:
+            apt:
+                sources:
+                    # add PPAs with more up-to-date toolchains
+                    - ubuntu-toolchain-r-test
+                    - george-edison55-precise-backports
+                    - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-4.0 main'
+                      key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
+                packages:
+                    # GCC 6.
+                    - gcc-6
+                    # CMake (outdated).
+                    - cmake-data
+                    - cmake
+          env:
+            - MATRIX_EVAL_BEFORE_INSTALL="CC=gcc-6"
+            - MATRIX_EVAL_BEFORE_SCRIPT="export CC=gcc-6"    
+        - compiler: clang
+          os: linux
+          addons:
+            apt:
+                sources:
+                    # add PPAs with more up-to-date toolchains
+                    - ubuntu-toolchain-r-test
+                    - george-edison55-precise-backports
+                    - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-4.0 main'
+                      key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
+                packages:
+                    # GCC 6
+                    - gcc-6
+                    # CLANG 4.0
+                    - clang-4.0
+                    - libc++-dev
+                    # CMake (outdated)
+                    - cmake-data
+                    - cmake
+          env:
+            - MATRIX_EVAL_BEFORE_INSTALL="CC=clang-4.0"
+            - MATRIX_EVAL_BEFORE_SCRIPT="export CC=clang-4.0"
+        - compiler: clang
+          os: osx
+          env:
+            - MATRIX_EVAL_BEFORE_INSTALL="CC=clang"
+            - MATRIX_EVAL_BEFORE_SCRIPT="export CC=clang"   
+
 before_install:
-- if [ "$CC" = "clang" ]; then 
-      export CC="clang-3.8" CXX="clang++-3.8" CXXFLAGS="-ftemplate-depth=1024";
-  else
-      export CC="gcc-6" CXX="g++-6";
-  fi
+- eval "${MATRIX_EVAL_BEFORE_INSTALL}"
   
 # Download and install CMake.
 install:
 # Create a dependency directory. Store its path in `${DEPS_DIR}`.
 - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
 - mkdir -p "${DEPS_DIR}" && cd "${DEPS_DIR}"
-# Download CMake 3.9.3 binary into `${DEPS_DIR}/cmake`.
+# Download CMake 3.10.1 binary into `${DEPS_DIR}/cmake`.
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then CMAKE_BIN_URL="https://cmake.org/files/v3.10/cmake-3.10.1-Darwin-x86_64.tar.gz" ; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then CMAKE_BIN_URL="https://cmake.org/files/v3.10/cmake-3.10.1-Linux-x86_64.tar.gz" ; fi
 # Unpack it and export its binary directory to path.
 - |
-  CMAKE_BIN_URL="https://cmake.org/files/v3.9/cmake-3.9.3-Linux-x86_64.tar.gz"
   mkdir -p cmake-bin
   cd cmake-bin
   wget --no-check-certificate -O - -q "${CMAKE_BIN_URL}" | tar xsz --strip-components=1 -f -
@@ -57,13 +91,8 @@ install:
   export PATH="${DEPS_DIR}/cmake-bin/bin:${PATH}"
 
 before_script:  
-- export CC=gcc-6
-- export CXX=g++-6
-# Log the versions of the C and C++ compiler, log the version of CMake. 
-#- gcc -v
-#- g++ -v
-# cmake --version
-# Run CMake.
+# Invoke CMake on CMakeLists.txt.
+- eval "${MATRIX_EVAL_BEFORE_SCRIPT}"
 - cd "${TRAVIS_BUILD_DIR}"
 - cmake CMakeLists.txt
 

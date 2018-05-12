@@ -1,4 +1,4 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 #include "Nucleus/Interpreter/ProcessContext.h"
 
 #include <assert.h>
@@ -78,10 +78,10 @@ Nucleus_Interpreter_ProcessContext_setStatus
 { context->status = status; }
 
 Nucleus_Interpreter_ReturnNonNull() Nucleus_Interpreter_NonNull() void *
-Nucleus_Interpreter_ProcessContext_allocate
+Nucleus_Interpreter_ProcessContext_allocateUnmanagedMemory
     (
         Nucleus_Interpreter_ProcessContext *context,
-        size_t size
+        Nucleus_Interpreter_Size size
     )
 {
     void *memoryBlock;
@@ -97,11 +97,11 @@ Nucleus_Interpreter_ProcessContext_allocate
 }
 
 Nucleus_Interpreter_ReturnNonNull() Nucleus_Interpreter_NonNull() void *
-Nucleus_Interpreter_ProcessContext_allocateArray
+Nucleus_Interpreter_ProcessContext_allocateUnmanagedArrayMemory
     (
         Nucleus_Interpreter_ProcessContext *context,
-        size_t numberOfElements,
-        size_t elementSize
+        Nucleus_Interpreter_Size numberOfElements,
+        Nucleus_Interpreter_Size elementSize
     )
 {
     void *memoryBlock;
@@ -118,7 +118,7 @@ Nucleus_Interpreter_ProcessContext_allocateArray
 }
 
 Nucleus_Interpreter_NonNull() void
-Nucleus_Interpreter_ProcessContext_deallocate
+Nucleus_Interpreter_ProcessContext_deallocateUnmanagedMemory
     (
         Nucleus_Interpreter_ProcessContext *context,
         void *memoryBlock

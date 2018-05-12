@@ -1,4 +1,4 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 // Interned strings.
 #include "Nucleus/Interpreter/String-private.c.in"
 
@@ -40,14 +40,14 @@ Nucleus_Interpreter_NonNull() static LookupResult
 lookup
     (
         Nucleus_Interpreter_Context *context,
-        Nucleus_Interpreter_StringHeap *stringHeap,
+        Nucleus_Interpreter_StringArena *stringArena,
         const char *bytes,
         Nucleus_Size numberOfBytes
     )
 {
     Nucleus_HashValue hashValue = Nucleus_Interpreter_hashMemory(context, bytes, numberOfBytes);
-    Nucleus_HashValue hashIndex = hashValue % stringHeap->capacity;
-    for (Nucleus_Interpreter_GC_Tag *tag = stringHeap->buckets[hashIndex]; NULL != tag; tag = tag->next)
+    Nucleus_HashValue hashIndex = hashValue % stringArena->capacity;
+    for (Nucleus_Interpreter_GC_Tag *tag = stringArena->buckets[hashIndex]; NULL != tag; tag = tag->next)
     {
         Nucleus_Interpreter_String *string = tag2Address(tag);
         if (hashValue == string->hashValue && numberOfBytes == string->numberOfBytes)
@@ -86,7 +86,7 @@ create
     status = Nucleus_Interpreter_GC_allocateManagedNoError(&NUCLEUS_INTERPRETER_PROCESSCONTEXT(context)->gc,
                                                            &tag,
                                                            sizeof(Nucleus_Interpreter_String) + numberOfBytes,
-                                                           &context->stringHeap.buckets[lookupResult->hashIndex]);
+                                                           &context->stringArena.buckets[lookupResult->hashIndex]);
     if (status)
     {
         Nucleus_Interpreter_ProcessContext_setStatus(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), status);
@@ -96,7 +96,7 @@ create
     string->numberOfBytes = numberOfBytes;
     string->hashValue = lookupResult->hashValue;
     Nucleus_copyMemory(string->bytes, bytes, numberOfBytes);
-    context->stringHeap.size++;
+    context->stringArena.size++;
     lookupResult->string = string;
 }
 
@@ -110,7 +110,7 @@ Nucleus_Interpreter_String_create
 {
     Nucleus_Interpreter_Context_assertNotNull(context, bytes);
     LookupResult lookupResult = lookup(NUCLEUS_INTERPRETER_CONTEXT(context),
-                                       &NUCLEUS_INTERPRETER_CONTEXT(context)->stringHeap,
+                                       &NUCLEUS_INTERPRETER_CONTEXT(context)->stringArena,
                                        bytes, numberOfBytes);
     if (lookupResult.string) return lookupResult.string;
     create(NUCLEUS_INTERPRETER_CONTEXT(context), bytes, numberOfBytes, &lookupResult);
@@ -145,7 +145,7 @@ Nucleus_Interpreter_String_concatenate
     Nucleus_copyMemory(bytes + 0, first->bytes, first->numberOfBytes);
     Nucleus_copyMemory(bytes + first->numberOfBytes, second->bytes, second->numberOfBytes);
     LookupResult lookupResult = lookup(NUCLEUS_INTERPRETER_CONTEXT(context),
-                                       &NUCLEUS_INTERPRETER_CONTEXT(context)->stringHeap, bytes, numberOfBytes);
+                                       &NUCLEUS_INTERPRETER_CONTEXT(context)->stringArena, bytes, numberOfBytes);
     if (lookupResult.string) return lookupResult.string;
     Nucleus_Interpreter_JumpTarget jt;
     Nucleus_Interpreter_ProcessContext_pushJumpTarget(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), &jt);

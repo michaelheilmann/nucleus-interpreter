@@ -1,4 +1,4 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 // Interned strings.
 #pragma once
 

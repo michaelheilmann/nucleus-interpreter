@@ -1,0 +1,77 @@
+// Copyright (c) Michael Heilmann 2018
+#include "Nucleus/Interpreter/Arenas/StringArena-private.h.in"
+
+Nucleus_Interpreter_NonNull() static void
+premark
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringArena *stringArena
+    )
+{
+    for (Nucleus_Size i = 0, n = stringArena->capacity; i < n; ++i)
+    {
+        Nucleus_Interpreter_GC_Tag *tag = stringArena->buckets[i];
+        while (tag)
+        {
+            if (Nucleus_Interpreter_GC_Tag_isLocked(tag))
+            {
+                Nucleus_Interpreter_GC_Tag_setBlack(tag);
+            }
+        }
+    }
+}
+
+Nucleus_Interpreter_NonNull() static void
+finalize
+	(
+        Nucleus_Interpreter_Context *context,
+		Nucleus_Interpreter_GC_Tag *tag
+	)
+{
+	Nucleus_Interpreter_ProcessContext_deallocateUnmanagedMemory(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), tag);
+}
+
+Nucleus_Interpreter_NonNull() static void
+sweep
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringArena *stringArena
+    )
+{
+	Nucleus_Size live = 0, dead = 0;
+    for (size_t i = 0, n = stringArena->capacity; i < n; ++i)
+    {
+        Nucleus_Interpreter_GC_Tag **previous = &(stringArena->buckets[i]),
+		                            *current = stringArena->buckets[i];
+        while (current)
+        {
+			if (Nucleus_Interpreter_GC_Tag_isBlack(current))
+			{
+				previous = &current->next;
+				current = current->next;
+				live++;
+			}
+			else
+			{
+				*previous = current->next; // Predecessor points to successor.
+				dead++;
+				finalize(context, current);
+				--stringArena->size;
+				current = *previous;
+			}
+        }
+    }
+}
+
+Nucleus_Interpreter_NonNull() static void
+uninitialize
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringArena *stringArena
+    )
+{
+    Nucleus_Interpreter_GC_Arena_sweep(context, NUCLEUS_INTERPRETER_GC_ARENA(stringArena));
+    Nucleus_Interpreter_ProcessContext_deallocateUnmanagedMemory(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), stringArena->buckets);
+    stringArena->buckets = NULL;
+    stringArena->capacity = 0;
+}

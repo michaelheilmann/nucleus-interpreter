@@ -1,0 +1,36 @@
+// Copyright (c) Michael Heilmann 2018
+#pragma once
+
+#include "Nucleus/Interpreter/Arenas/GeneralArena.h"
+#include "Nucleus/Interpreter/Context.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+
+Nucleus_Interpreter_NonNull() static void
+premark
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_GeneralArena *generalArena
+    );
+
+Nucleus_Interpreter_NonNull() static void
+finalize
+	(
+        Nucleus_Interpreter_Context *context,
+		Nucleus_Interpreter_GC_Tag *tag
+	);
+
+Nucleus_Interpreter_NonNull() static void
+sweep
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_GeneralArena *generalArena
+    );
+
+Nucleus_Interpreter_NonNull() static void
+uninitialize
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_GeneralArena *generalArena
+    );

@@ -1,0 +1,56 @@
+// Copyright (c) Michael Heilmann 2018
+#pragma once
+
+#include "Nucleus/Interpreter/Arenas/LockArena.h"
+#include "Nucleus/Interpreter/Context.h"
+
+struct Nucleus_Interpreter_Lock
+{
+	Nucleus_Interpreter_Lock *next;
+	Nucleus_HashValue hashValue;
+	Nucleus_Interpreter_GC_Tag *tag;
+	Nucleus_Interpreter_LockArena *arena;
+};
+
+Nucleus_Interpreter_NonNull() static void
+premark
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_LockArena *lockArena
+    );
+	
+Nucleus_Interpreter_NonNull() static void
+sweep
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_LockArena *lockArena
+    );
+
+Nucleus_Interpreter_NonNull() static void
+uninitialize
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_LockArena *lockArena
+    );
+
+Nucleus_Interpreter_NonNull() static Nucleus_Interpreter_Lock *
+allocateLock
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_LockArena *lockArena
+    );
+
+Nucleus_Interpreter_NonNull() static void
+deallocateLock
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_LockArena *lockArena,
+		Nucleus_Interpreter_Lock *lock
+    );
+
+Nucleus_Interpreter_NonNull() static Nucleus_HashValue
+hash
+    (
+        Nucleus_Interpreter_Context *context,
+        const Nucleus_Interpreter_GC_Tag *tag
+    );

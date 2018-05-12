@@ -1,4 +1,4 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 // https://github.com/nucleus-interpreter/blob/master/documentation/Nucleus_Interpreter_GC.md
 #include "Nucleus/Interpreter/GC.h"
 
@@ -12,10 +12,11 @@ Nucleus_Interpreter_initializeGC
         Nucleus_Interpreter_GC *gc
     )
 {
-    if (!gc) return Nucleus_Interpreter_Status_InvalidArgument;
+    if (Nucleus_Unlikely(!gc)) return Nucleus_Interpreter_Status_InvalidArgument;
     // Initialize the gray list.
     gc->gray = NULL;
-    return Nucleus_Interpreter_Status_Success;
+	// Initialize the heap list.
+	return Nucleus_Collections_PointerArray_initialize(&gc->arenas, 8, NULL, NULL);
 }
 
 Nucleus_Interpreter_NonNull() void
@@ -23,7 +24,9 @@ Nucleus_Interpreter_uninitializeGC
     (
         Nucleus_Interpreter_GC *gc
     )
-{}
+{
+	Nucleus_Collections_PointerArray_uninitialize(&gc->arenas);
+}
 
 Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Status
 Nucleus_Interpreter_GC_allocate
@@ -33,10 +36,10 @@ Nucleus_Interpreter_GC_allocate
         size_t size
     )
 {
-    if (!gc || !memoryBlock) return Nucleus_Interpreter_Status_InvalidArgument;
+    if (Nucleus_Unlikely(!gc || !memoryBlock)) return Nucleus_Interpreter_Status_InvalidArgument;
     void *localMemoryBlock = NULL;
     Nucleus_Status status = Nucleus_allocateMemory(&localMemoryBlock, size);
-    if (status)
+    if (Nucleus_Unlikely(status))
     {
         switch (status)
         {
@@ -62,10 +65,10 @@ Nucleus_Interpreter_GC_allocateArray
         size_t elementSize
     )
 {
-    if (!gc || !memoryBlock) return Nucleus_Interpreter_Status_InvalidArgument;
+    if (Nucleus_Unlikely(!gc || !memoryBlock)) return Nucleus_Interpreter_Status_InvalidArgument;
     void *localMemoryBlock = NULL;
     Nucleus_Status status = Nucleus_allocateArrayMemory(&localMemoryBlock, numberOfElements, elementSize);
-    if (status)
+    if (Nucleus_Unlikely(status))
     {
         switch (status)
         {
@@ -91,3 +94,28 @@ Nucleus_Interpreter_GC_deallocate
         void *memoryBlock
     )
 { Nucleus_deallocateMemory(memoryBlock); }
+
+Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Status
+Nucleus_Interpreter_GC_registerArena
+	(
+		Nucleus_Interpreter_GC *gc,
+		Nucleus_Interpreter_GC_Arena *arena
+	)
+{
+	Nucleus_Status status = Nucleus_Collections_PointerArray_append(&gc->arenas, arena);
+	if (Nucleus_Unlikely(status))
+	{
+		switch (status)
+		{
+			case Nucleus_Status_InvalidArgument:
+				return Nucleus_Interpreter_Status_InvalidArgument;
+			case Nucleus_Status_Overflow:
+				return Nucleus_Interpreter_Status_Overflow;
+			case Nucleus_Status_AllocationFailed:
+				return Nucleus_Interpreter_Status_AllocationFailed;
+			default:
+				return Nucleus_Interpreter_Status_InternalError;
+		};
+	}
+	return status;
+}

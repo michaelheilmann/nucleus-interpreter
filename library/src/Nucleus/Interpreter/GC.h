@@ -1,14 +1,15 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 // https://github.com/nucleus-interpreter/blob/master/documentation/Nucleus_Interpreter_GC.md
 #pragma once
 
 #include "Nucleus/Interpreter/Annotations.h"
 #include "Nucleus/Interpreter/Status.h"
-#include <stddef.h> // For size_t.
+#include "Nucleus/Types/Size.h"
+#include "Nucleus/Collections/PointerArray.h"
 
-// Forward declaration.
+// Forward declarations.
 typedef struct Nucleus_Interpreter_GC_Tag Nucleus_Interpreter_GC_Tag;
-//typedef struct Nucleus_Interpreter_GC_Object Nucleus_Interpreter_GC_Object;
+typedef struct Nucleus_Interpreter_GC_Arena Nucleus_Interpreter_GC_Arena;
 typedef struct Nucleus_Interpreter_Type Nucleus_Interpreter_Type;
 
 typedef enum Nucleus_Interpreter_GC_State Nucleus_Interpreter_GC_State;
@@ -25,6 +26,7 @@ struct Nucleus_Interpreter_GC
 {
     Nucleus_Interpreter_GC_State state;
     Nucleus_Interpreter_GC_Tag *gray; // List of gray objects.
+	Nucleus_Collections_PointerArray arenas; // Array of arenas.
 }; // struct Nucleus_Interpreter_GC
 
 Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Status
@@ -86,3 +88,11 @@ Nucleus_Interpreter_GC_deallocate
         Nucleus_Interpreter_GC *gc,
         void *memoryBlock
     );
+
+Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Status
+Nucleus_Interpreter_GC_registerArena
+	(
+		Nucleus_Interpreter_GC *gc,
+		Nucleus_Interpreter_GC_Arena *arena
+	);
+

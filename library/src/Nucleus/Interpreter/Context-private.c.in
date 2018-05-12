@@ -9,7 +9,7 @@ Nucleus_Interpreter_ScratchSpace_create
     )
 {
     Nucleus_Interpreter_ScratchSpace *temporary =
-        Nucleus_Interpreter_ProcessContext_allocate
+        Nucleus_Interpreter_ProcessContext_allocateUnmanagedMemory
             (
                 NUCLEUS_INTERPRETER_PROCESSCONTEXT(context),
                 sizeof(Nucleus_Interpreter_ScratchSpace) +
@@ -25,4 +25,4 @@ Nucleus_Interpreter_ScratchSpace_destroy
         Nucleus_Interpreter_Context *context,
         Nucleus_Interpreter_ScratchSpace *scratchSpace
     )
-{ Nucleus_Interpreter_ProcessContext_deallocate(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), scratchSpace); }
+{ Nucleus_Interpreter_ProcessContext_deallocateUnmanagedMemory(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), scratchSpace); }

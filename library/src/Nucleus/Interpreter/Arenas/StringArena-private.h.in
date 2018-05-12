@@ -1,0 +1,33 @@
+// Copyright (c) Michael Heilmann 2018
+#pragma once
+
+#include "Nucleus/Interpreter/Arenas/StringArena.h"
+#include "Nucleus/Interpreter/Context.h"
+
+Nucleus_Interpreter_NonNull() static void
+premark
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringArena *stringArena
+    );
+
+Nucleus_Interpreter_NonNull() static void
+finalize
+	(
+        Nucleus_Interpreter_Context *context,
+		Nucleus_Interpreter_GC_Tag *tag
+	);
+	
+Nucleus_Interpreter_NonNull() static void
+sweep
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringArena *stringArena
+    );
+
+Nucleus_Interpreter_NonNull() static void
+uninitialize
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_StringArena *stringArena
+    );
