@@ -1,8 +1,7 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 #pragma once
 
 #include "Nucleus/Interpreter/Annotations.h"
-#include "Nucleus/Interpreter/Integer.h"
 
 // Forward declarations.
 typedef struct Nucleus_Interpreter_Context Nucleus_Interpreter_Context;

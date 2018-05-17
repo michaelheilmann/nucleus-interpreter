@@ -1,4 +1,4 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 #include "Nucleus/Interpreter/StringIterator-private.c.in"
 
 Nucleus_Interpreter_ReturnNonNull() Nucleus_Interpreter_NonNull() Nucleus_Interpreter_StringIterator *
@@ -8,7 +8,7 @@ Nucleus_Interpreter_StringIterator_create
         Nucleus_Interpreter_String *string
     )
 {
-    Nucleus_Interpreter_StringIterator *stringIterator = (Nucleus_Interpreter_StringIterator *)Nucleus_Interpreter_Context_allocateObject(context, sizeof(Nucleus_Interpreter_StringIterator));
+    Nucleus_Interpreter_StringIterator *stringIterator = (Nucleus_Interpreter_StringIterator *)Nucleus_Interpreter_Context_allocateManaged(context, sizeof(Nucleus_Interpreter_StringIterator));
     Nucleus_Interpreter_Type *type = getOrCreateType(context);
     Nucleus_Interpreter_Object_setType(context, NUCLEUS_INTERPRETER_OBJECT(stringIterator), type);
     stringIterator->string = string;

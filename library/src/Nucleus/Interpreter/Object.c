@@ -1,4 +1,4 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 #include "Nucleus/Interpreter/Object.h"
 
 #include "Nucleus/Interpreter/TS.h"
@@ -8,6 +8,7 @@
 Nucleus_Interpreter_NoError() Nucleus_Interpreter_NonNull() void
 Nucleus_Interpreter_Object_lock
     (
+		Nucleus_Interpreter_Context *context,
         Nucleus_Interpreter_Object *object
     )
 { Nucleus_Interpreter_GC_Tag_lock(address2Tag(object)); }
@@ -15,13 +16,15 @@ Nucleus_Interpreter_Object_lock
 Nucleus_Interpreter_NoError() Nucleus_Interpreter_NonNull() void
 Nucleus_Interpreter_Object_unlock
     (
+		Nucleus_Interpreter_Context *context,
         Nucleus_Interpreter_Object *object
     )
 { Nucleus_Interpreter_GC_Tag_unlock(address2Tag(object)); }
 
-Nucleus_Interpreter_NoError() Nucleus_Interpreter_NonNull() bool
+Nucleus_Interpreter_NoError() Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Boolean
 Nucleus_Interpreter_Object_isLocked
     (
+		Nucleus_Interpreter_Context *context,
         Nucleus_Interpreter_Object *object
     )
 { return Nucleus_Interpreter_GC_Tag_isLocked(address2Tag(object)); }

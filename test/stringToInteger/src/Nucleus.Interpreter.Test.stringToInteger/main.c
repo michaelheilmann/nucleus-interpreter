@@ -1,6 +1,5 @@
 #include "Nucleus/Interpreter/Context.h"
 #include "Nucleus/Interpreter/Conversions.h"
-#include "Nucleus/Interpreter/Integer.h"
 #include "Nucleus/Interpreter/String.h"
 #include "Nucleus/Interpreter/UnitTesting.h"
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 // Provides getting/setting a status, pushing/popping/jumping to jump targets, and memory allocations/deallocations.
 #pragma once
 
@@ -114,10 +114,10 @@ Nucleus_Interpreter_ProcessContext_setStatus
 /// @param size the size, in Bytes, of the memory block to allocate. @a 0 is a valid size.
 /// @return a pointer to the beginning of the unmanaged memory block of the size @a numberOfBytes
 Nucleus_Interpreter_ReturnNonNull() Nucleus_Interpreter_NonNull() void *
-Nucleus_Interpreter_ProcessContext_allocate
+Nucleus_Interpreter_ProcessContext_allocateUnmanagedMemory
     (
         Nucleus_Interpreter_ProcessContext *context,
-        size_t size
+        Nucleus_Interpreter_Size size
     );
 
 /// @ingroup interpreter
@@ -127,11 +127,11 @@ Nucleus_Interpreter_ProcessContext_allocate
 /// @param numberOfElements, elementSize the size, in Bytes, of the memory block to allocate. @a 0 is a valid size.
 /// @return a pointer to the beginning of the unmanaged memory block of the size @a numberOfBytes
 Nucleus_Interpreter_ReturnNonNull() Nucleus_Interpreter_NonNull() void *
-Nucleus_Interpreter_ProcessContext_allocateArray
+Nucleus_Interpreter_ProcessContext_allocateUnmanagedArrayMemory
     (
         Nucleus_Interpreter_ProcessContext *context,
-        size_t numberOfElements,
-        size_t elementSize
+        Nucleus_Interpreter_Size numberOfElements,
+        Nucleus_Interpreter_Size elementSize
     );
 
 /// @ingroup interpreter
@@ -141,7 +141,7 @@ Nucleus_Interpreter_ProcessContext_allocateArray
 /// @param memoryBlock a pointer to an unmanaged memory block previously allocated by
 /// @a (Nucleus_Interpreter_ProcessContext_allocate) or @a (Nucleus_Interpreter_ProcessContext_allocateArray)
 Nucleus_Interpreter_NonNull() void
-Nucleus_Interpreter_ProcessContext_deallocate
+Nucleus_Interpreter_ProcessContext_deallocateUnmanagedMemory
     (
         Nucleus_Interpreter_ProcessContext *context,
         void *memoryBlock

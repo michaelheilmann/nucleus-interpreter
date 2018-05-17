@@ -1,0 +1,110 @@
+// Copyright (c) Michael Heilmann 2018
+#include "Nucleus/Interpreter/Arenas/LockArena-private.h.in"
+
+#include "Nucleus/Hash/Pointer.h"
+#include "Nucleus/Interpreter/Context.h"
+
+Nucleus_Interpreter_NonNull() static void
+premark
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_LockArena *lockArena
+    )
+{
+	for (Nucleus_Interpreter_Size i = 0, n = lockArena->capacity; i < n; ++i)
+	{
+		Nucleus_Interpreter_Lock *lock = lockArena->buckets[i];
+		while (lock)
+		{
+			Nucleus_Interpreter_GC_Tag *tag = lock->tag;
+			// If the object is white (i.e. is neither gray nor black), put it into gray list.
+			if (Nucleus_Interpreter_GC_Tag_isWhite(tag))
+			{
+				NUCLEUS_INTERPRETER_PROCESSCONTEXT(context)->gc.gray = tag;
+				tag->next = NUCLEUS_INTERPRETER_PROCESSCONTEXT(context)->gc.gray;
+				Nucleus_Interpreter_GC_Tag_setGray(tag);
+			}
+			lock = lock->next;
+		}
+	}
+}
+
+Nucleus_Interpreter_NonNull() static void
+sweep
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_LockArena *lockArena
+    )
+{ /* Nothing to do. */ }
+
+Nucleus_Interpreter_NonNull() static void
+uninitialize
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_LockArena *lockArena
+    )
+{
+	for (Nucleus_Size i = 0, n = lockArena->capacity; i < n; ++i)
+	{
+		Nucleus_Interpreter_Lock **bucket = &(lockArena->buckets[i]);
+		while (*bucket)
+		{
+			Nucleus_Interpreter_Lock *node = *bucket; *bucket = node->next;
+			Nucleus_Interpreter_ProcessContext_deallocateUnmanagedMemory(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), node);
+		}
+	}
+    Nucleus_Interpreter_ProcessContext_deallocateUnmanagedMemory(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), lockArena->buckets);
+    lockArena->buckets = NULL;
+    lockArena->capacity = 0;
+
+	while (lockArena->free)
+	{
+		Nucleus_Interpreter_Lock *node = lockArena->free; lockArena->free = node->next;
+		Nucleus_Interpreter_ProcessContext_deallocateUnmanagedMemory(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), node);
+	}
+}
+
+Nucleus_Interpreter_NonNull() static Nucleus_Interpreter_Lock *
+allocateLock
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_LockArena *lockArena
+    )
+{
+	Nucleus_Interpreter_Lock *lock;
+	if (lockArena->free)
+	{
+		lock = lockArena->free; lockArena->free = lock->next;
+		return lock;
+	}
+	else
+	{
+		lock = Nucleus_Interpreter_ProcessContext_allocateUnmanagedMemory(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context),
+	                                                                      sizeof(Nucleus_Interpreter_Lock));
+	}
+	return lock;
+}
+
+Nucleus_Interpreter_NonNull() static void
+deallocateLock
+    (
+        Nucleus_Interpreter_Context *context,
+        Nucleus_Interpreter_LockArena *lockArena,
+		Nucleus_Interpreter_Lock *lock
+    )
+{
+	lock->next = lockArena->free;
+	lockArena->free = lock;
+}
+
+Nucleus_Interpreter_NonNull() static Nucleus_HashValue
+hash
+    (
+        Nucleus_Interpreter_Context *context,
+        const Nucleus_Interpreter_GC_Tag *tag
+    )
+{
+    Nucleus_HashValue hv;
+    Nucleus_hashPointer(tag, &hv);
+    return hv;
+}

@@ -1,9 +1,9 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 #include "Nucleus/Interpreter/GC/Object.h"
 #include "Nucleus/Interpreter/GC.h"
 #include "Nucleus/Interpreter/TS.h"
 #include "Nucleus/SafeArithmeticOperations.h"
-#include <stdint.h> // For SIZE_MAX.
+#include "Nucleus/Memory.h"
 
 Nucleus_Interpreter_GC_Tag *
 address2Tag
@@ -136,13 +136,15 @@ Nucleus_Interpreter_GC_allocateManagedNoError
     {
         return Nucleus_Interpreter_Status_Overflow;
     }
+	Nucleus_Size numberOfBytes = sizeof(Nucleus_Interpreter_GC_Tag) + size;
     Nucleus_Interpreter_Status status = Nucleus_Interpreter_GC_allocate(gc,
                                                                         (void **)&tag1,
-                                                                        sizeof(Nucleus_Interpreter_GC_Tag) + size);
-    if (status)
+                                                                        numberOfBytes);
+    if (Nucleus_Unlikely(status))
     {
         return Nucleus_Interpreter_Status_AllocationFailed;
     }
+	Nucleus_fillMemory(tag1, 0, numberOfBytes);
     Nucleus_Interpreter_GC_Tag_setWhite(tag1);
     tag1->next = *list; *list = tag1;
     *tag = tag1;
@@ -205,6 +207,7 @@ Nucleus_Interpreter_GC_allocateManagedArrayNoError
     Nucleus_Interpreter_GC_Tag *tag1;
     Nucleus_Interpreter_Status status = Nucleus_Interpreter_GC_allocate(gc, (void **)&tag1, sizeInBytes);
     if (Nucleus_Unlikely(status)) return status;
+	Nucleus_fillMemory(tag1, 0, sizeInBytes);
     Nucleus_Interpreter_GC_Tag_setWhite(tag1);
     tag1->next = *list; *list = tag1;
     *tag = tag1;

@@ -1,10 +1,10 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 // Interpreter context.
 #pragma once
 
 #include "Nucleus/Interpreter/ProcessContext.h"
-#include "Nucleus/Interpreter/GeneralHeap.h"
-#include "Nucleus/Interpreter/StringHeap.h"
+#include "Nucleus/Interpreter/Arenas/GeneralArena.h"
+#include "Nucleus/Interpreter/Arenas/StringArena.h"
 #include "Nucleus/Interpreter/Object.h"
 
 // Forward declaration.
@@ -28,10 +28,10 @@ typedef struct Nucleus_Interpreter_Context Nucleus_Interpreter_Context;
 struct Nucleus_Interpreter_Context
 {
     Nucleus_Interpreter_ProcessContext __parent;
-    /// @brief The general heap.
-    Nucleus_Interpreter_GeneralHeap generalHeap;
-    /// @brief The string heap.
-    Nucleus_Interpreter_StringHeap stringHeap;
+    /// @brief The general arena.
+    Nucleus_Interpreter_GeneralArena generalArena;
+    /// @brief The string arena.
+    Nucleus_Interpreter_StringArena stringArena;
     /// @brief A null pointer or a pointer to the first element of the singly-linked list of @a (Nucleus_Interpreter_ScratchSpace) objects.
     Nucleus_Interpreter_ScratchSpace *scratchSpaces;
 }; // struct Nucleus_Interpreter_Context
@@ -78,10 +78,18 @@ Nucleus_Interpreter_Context_destroy
     );
 
 Nucleus_Interpreter_ReturnNonNull() Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Object *
-Nucleus_Interpreter_Context_allocateObject
+Nucleus_Interpreter_Context_allocateManagedArray
+	(
+        Nucleus_Interpreter_Context *context,
+		Nucleus_Interpreter_Type *arrayType,
+        Nucleus_Interpreter_Size numberOfElements	
+	);
+
+Nucleus_Interpreter_ReturnNonNull() Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Object *
+Nucleus_Interpreter_Context_allocateManaged
     (
         Nucleus_Interpreter_Context *context,
-        size_t numberOfBytes
+        Nucleus_Interpreter_Size numberOfBytes
     );
 
 /// @ingroup interpreter
@@ -117,9 +125,10 @@ Nucleus_Interpreter_Context_relinquishScratchSpace
         char *bytes
     );
 
-#define Nucleus_Interpreter_Context_assertNotNull(C, A) \
-    if (!(A)) { \
-        Nucleus_Interpreter_ProcessContext_setStatus(NUCLEUS_INTERPRETER_PROCESSCONTEXT(C), Nucleus_Interpreter_Status_InvalidArgument); \
+#define Nucleus_Interpreter_Context_assertNotNull(C, P) \
+    if (NULL == (P)) { \
+        Nucleus_Interpreter_ProcessContext_setStatus(NUCLEUS_INTERPRETER_PROCESSCONTEXT(C), \
+		                                             Nucleus_Interpreter_Status_InvalidArgument); \
         Nucleus_Interpreter_ProcessContext_jump(NUCLEUS_INTERPRETER_PROCESSCONTEXT(C)); \
     }
 

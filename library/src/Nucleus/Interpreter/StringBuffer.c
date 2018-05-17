@@ -14,8 +14,8 @@ Nucleus_Interpreter_StringBuffer_initialize
     )
 {
     Nucleus_Interpreter_Context_assertNotNull(context, stringBuffer);
-    stringBuffer->array = Nucleus_Interpreter_ProcessContext_allocateArray(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context),
-                                                                        initialCapacity, sizeof(char));
+    stringBuffer->array = Nucleus_Interpreter_ProcessContext_allocateUnmanagedArrayMemory(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context),
+                                                                                          initialCapacity, sizeof(char));
     stringBuffer->size = 0;
     stringBuffer->capacity = initialCapacity;
 }
@@ -27,7 +27,7 @@ Nucleus_Interpreter_StringBuffer_uninitialize
         Nucleus_Interpreter_StringBuffer *stringBuffer
     )
 {
-    Nucleus_Interpreter_ProcessContext_deallocate(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), stringBuffer->array);
+    Nucleus_Interpreter_ProcessContext_deallocateUnmanagedMemory(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), stringBuffer->array);
     stringBuffer->array = NULL;
 }
 
@@ -47,11 +47,11 @@ Nucleus_Interpreter_StringBuffer_ensureFreeCapacity
         size_t oldCapacity = stringBuffer->capacity;
         size_t newCapacity = oldCapacity + additionalCapacity;
         char *oldArray = stringBuffer->array;
-        char *newArray = Nucleus_Interpreter_ProcessContext_allocateArray(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context),
-                                                                       newCapacity, sizeof(char));
+        char *newArray = Nucleus_Interpreter_ProcessContext_allocateUnmanagedArrayMemory(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context),
+                                                                                         newCapacity, sizeof(char));
         Nucleus_copyArrayMemory(newArray, oldArray, oldCapacity, sizeof(char));
         stringBuffer->array = newArray;
-        Nucleus_Interpreter_ProcessContext_deallocate(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), oldArray);
+        Nucleus_Interpreter_ProcessContext_deallocateUnmanagedMemory(NUCLEUS_INTERPRETER_PROCESSCONTEXT(context), oldArray);
         stringBuffer->capacity = newCapacity;
     }
 }

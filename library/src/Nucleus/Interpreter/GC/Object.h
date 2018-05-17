@@ -1,4 +1,4 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 #pragma once
 
 #include "Nucleus/Interpreter/Annotations.h"
@@ -171,6 +171,8 @@ Nucleus_Interpreter_GC_Tag_setWhite
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+// The object's current type is "null".
+// The object's target type is "type".
 Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Status
 Nucleus_Interpreter_GC_allocateManagedNoError
     (
@@ -180,6 +182,8 @@ Nucleus_Interpreter_GC_allocateManagedNoError
         Nucleus_Interpreter_GC_Tag **list
     );
 
+// The object's current type is "arrayType".
+// The elements are initialized with the default values of their type.
 Nucleus_Interpreter_NonNull() Nucleus_Interpreter_Status
 Nucleus_Interpreter_GC_allocateManagedArrayNoError
     (

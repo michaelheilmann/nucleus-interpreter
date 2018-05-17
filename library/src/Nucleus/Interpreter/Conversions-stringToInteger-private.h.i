@@ -1,9 +1,8 @@
-// Copyright (c) Michael Heilmann 2018
+// Copyright (c) 2018 Michael Heilmann
 #pragma once
 
 #include "Nucleus/Interpreter/Conversions-stringToInteger.h"
 #include "Nucleus/Interpreter/Context.h"
-#include "Nucleus/Interpreter/Boolean.h"
 #include "Nucleus/Interpreter/String.h"
 #include "Nucleus/Interpreter/StringIterator.h"
 #include "Nucleus/Interpreter/Symbol.h"

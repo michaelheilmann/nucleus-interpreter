@@ -2,7 +2,7 @@
 
 #include "Nucleus/Interpreter/TS.h"
 #include "Nucleus/Interpreter/GC/Object.h"
-#include "Nucleus/Interpreter/GC/Heap.h"
+#include "Nucleus/Interpreter/GC/Arena.h"
 #include "Nucleus/Interpreter/Context.h"
 
 Nucleus_Interpreter_NonNull() static void
@@ -124,8 +124,15 @@ Nucleus_Interpreter_GC_onRun
         }
         else if (gc->state == Nucleus_Interpreter_GC_State_Premark)
         {
-            Nucleus_Interpreter_GC_Heap_premark(context, NUCLEUS_INTERPRETER_GC_HEAP(&context->generalHeap));
-            Nucleus_Interpreter_GC_Heap_premark(context, NUCLEUS_INTERPRETER_GC_HEAP(&context->stringHeap));
+			Nucleus_Size i, n;
+			Nucleus_Collections_PointerArray_getSize(&gc->arenas, &n); // Return value can be ignored.
+			for (i = 0; i < n; ++i)
+			{
+				Nucleus_Interpreter_GC_Arena *arena = NULL;
+				Nucleus_Collections_PointerArray_at(&gc->arenas, i, (void **)&arena); // Return value can be ignored.
+				Nucleus_Interpreter_GC_Arena_premark(context, arena);
+
+			}
             gc->state = Nucleus_Interpreter_GC_State_Mark;
         }
         else if (gc->state == Nucleus_Interpreter_GC_State_Mark)
@@ -135,8 +142,15 @@ Nucleus_Interpreter_GC_onRun
         }
         if (gc->state == Nucleus_Interpreter_GC_State_Sweep)
         {
-            Nucleus_Interpreter_GC_Heap_sweep(context, NUCLEUS_INTERPRETER_GC_HEAP(&context->generalHeap));
-            Nucleus_Interpreter_GC_Heap_sweep(context, NUCLEUS_INTERPRETER_GC_HEAP(&context->stringHeap));
+			Nucleus_Size i, n;
+			Nucleus_Collections_PointerArray_getSize(&gc->arenas, &n); // Return value can be ignored.
+			for (i = 0; i < n; ++i)
+			{
+				Nucleus_Interpreter_GC_Arena *arena = NULL;
+				Nucleus_Collections_PointerArray_at(&gc->arenas, i, (void **)&arena); // Return value can be ignored.
+				Nucleus_Interpreter_GC_Arena_sweep(context, arena);
+
+			}
             gc->state = Nucleus_Interpreter_GC_State_Idle;
         }
     } while (gc->state == Nucleus_Interpreter_GC_State_Idle);
