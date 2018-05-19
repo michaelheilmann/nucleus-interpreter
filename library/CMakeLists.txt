@@ -1,18 +1,24 @@
 # Copyright (c) 2017, 2018 Michael Heilmann
-
-# Minimum required CMake version.
+# Assert minimum CMake version.
 cmake_minimum_required (VERSION 3.8)
+# Define the static library.
+set(libraries Nucleus.Library)
 
-# Project.
-project (Nucleus.Interpreter.Library C)
+set(Machine.Library_HEADER_FILES)
+list(APPEND Machine.Library_HEADER_FILES
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/UnicodeCodePoints.h")
+set_source_files_properties(${Machine.Library_HEADER_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
 
-if (NUCLEUS_PATH)
-  include(${NUCLEUS_PATH}/buildsystem/detect_compiler_and_platform.cmake)
-  include(${NUCLEUS_PATH}/buildsystem/set_default_project_properties.cmake)
-else()
-  include(${CMAKE_CURRENT_SOURCE_DIR}/../buildsystem/detect_compiler_and_platform.cmake)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/../buildsystem/set_default_project_properties.cmake)
-endif()
+set(Machine.Library_INLAY_FILES)
+list(APPEND Machine.Library_INLAY_FILES
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/UnicodeCodePoints.i")
+set_source_files_properties(${Machine.Library_INLAY_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
+
+
+define_static_library(Nucleus.Interpreter Machine.Library ${libraries} ${NUCLEUS_LANGUAGE_ID_C})
 
 # The interpreter types file.
 set(SOURCE_FILENAME "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Types.l")
@@ -29,9 +35,9 @@ add_custom_command(
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag.c"
     DEPENDS
-        ${SOURCE_FILENAME} Interpreter.Tools.Generator
+        ${SOURCE_FILENAME} Nucleus.Interpreter.Tools.Generator
     COMMAND
-        Interpreter.Tools.Generator --generator=${TAG_GENERATOR} --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag"
+        Nucleus.Interpreter.Tools.Generator --generator=${TAG_GENERATOR} --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag"
     COMMENT
         "Generating ${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag.c and ${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag.h from ${SOURCE_FILENAME}"
     VERBATIM
@@ -49,9 +55,9 @@ add_custom_command(
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value.h"
     DEPENDS
-        ${SOURCE_FILENAME} Interpreter.Tools.Generator
+        ${SOURCE_FILENAME} Nucleus.Interpreter.Tools.Generator
     COMMAND
-        Interpreter.Tools.Generator --generator=${VALUE_GENERATOR} --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value"
+        Nucleus.Interpreter.Tools.Generator --generator=${VALUE_GENERATOR} --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value"
     COMMENT
         "Generating ${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value.c and ${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value.h from ${SOURCE_FILENAME}"
     VERBATIM
@@ -69,9 +75,9 @@ add_custom_command(
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue.h"
     DEPENDS
-        ${SOURCE_FILENAME} Interpreter.Tools.Generator
+        ${SOURCE_FILENAME} Nucleus.Interpreter.Tools.Generator
     COMMAND
-        Interpreter.Tools.Generator --generator=${TAGGEDVALUE_GENERATOR} --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue"
+        Nucleus.Interpreter.Tools.Generator --generator=${TAGGEDVALUE_GENERATOR} --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue"
     COMMENT
         "Generating ${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue.c and ${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue.h from ${SOURCE_FILENAME}"
     VERBATIM
@@ -89,9 +95,9 @@ add_custom_command(
     OUTPUT
         ${TARGET_HEADER_FILENAME}
     DEPENDS
-        ${SOURCE_FILENAME} Interpreter.Tools.Unicode
+        ${SOURCE_FILENAME} Nucleus.Interpreter.Tools.Unicode
     COMMAND
-        Interpreter.Tools.Unicode --generator=Header --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} ${TARGET_HEADER_FILENAME}
+        Nucleus.Interpreter.Tools.Unicode --generator=Header --prefix=Nucleus_Interpreter_ ${SOURCE_FILENAME} ${TARGET_HEADER_FILENAME}
     COMMENT
         "Generating ${TARGET_HEADER_FILENAME} from ${SOURCE_FILENAME}"
     VERBATIM
@@ -106,34 +112,10 @@ add_custom_command(
     OUTPUT
         ${TARGET_INLAY_FILENAME}
     DEPENDS
-        ${SOURCE_FILENAME} Interpreter.Tools.Unicode
+        ${SOURCE_FILENAME} Nucleus.Interpreter.Tools.Unicode
     COMMAND
-        Interpreter.Tools.Unicode --generator=Inlay --prefix= ${SOURCE_FILENAME} ${TARGET_INLAY_FILENAME}
+        Nucleus.Interpreter.Tools.Unicode --generator=Inlay --prefix= ${SOURCE_FILENAME} ${TARGET_INLAY_FILENAME}
     COMMENT
         "Generating ${TARGET_INLAY_FILENAME} from ${SOURCE_FILENAME}"
     VERBATIM
 )
-
-# Find and configure source files.
-file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}" "src/*.c")
-# Find and configure header files.
-file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}" "src/*.h")
-list(APPEND HEADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue.h"
-                         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value.h"
-                         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag.h"
-                         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/UnicodeCodePoints.h"
-                         "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/UnicodeCodePoints.i")
-set_source_files_properties(${HEADER_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
-# Define and configure the library.
-add_library(Nucleus.Interpreter.Library STATIC ${SOURCE_FILES} ${HEADER_FILES})
-target_link_libraries(Nucleus.Interpreter.Library Nucleus.Library)
-target_include_directories(Nucleus.Interpreter.Library PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
-target_include_directories(Nucleus.Interpreter.Library INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/src")
-# Set its properties.
-set_project_default_properties(Nucleus.Interpreter.Library)
-
-IF(DOXYGEN_FOUND)
-    ADD_CUSTOM_TARGET(Nucleus.Interpreter.Library.Documentation ${DOXYGEN_EXECUTABLE} COMMENT "Building documentation")
-ELSE(DOXYGEN_FOUND)
-    MESSAGE(STATUS "Doxygen not found. You won't be able to build documentation.")
-ENDIF(DOXYGEN_FOUND)
