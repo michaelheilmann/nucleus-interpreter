@@ -3,22 +3,21 @@
 cmake_minimum_required (VERSION 3.8)
 # Define the static library.
 set(libraries Nucleus.Library)
-
-set(Machine.Library_HEADER_FILES)
-list(APPEND Machine.Library_HEADER_FILES
+set(Nucleus.Interpreter.Library_HEADER_FILES)
+list(APPEND Nucleus.Interpreter.Library_HEADER_FILES
             "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue.h"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Value.h"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Tag.h"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/UnicodeCodePoints.h")
-set_source_files_properties(${Machine.Library_HEADER_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
+set_source_files_properties(${Nucleus.Interpreter.Library_HEADER_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
 
-set(Machine.Library_INLAY_FILES)
-list(APPEND Machine.Library_INLAY_FILES
+set(Nucleus.Interpreter.Library_INLAY_FILES)
+list(APPEND Nucleus.Interpreter.Library_INLAY_FILES
             "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/UnicodeCodePoints.i")
-set_source_files_properties(${Machine.Library_INLAY_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
+set_source_files_properties(${Nucleus.Interpreter.Library_INLAY_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
 
 
-define_static_library(Nucleus.Interpreter Machine.Library ${libraries} ${NUCLEUS_LANGUAGE_ID_C})
+define_static_library(Nucleus.Interpreter Nucleus.Interpreter.Library ${libraries} ${NUCLEUS_LANGUAGE_ID_C})
 
 # The interpreter types file.
 set(SOURCE_FILENAME "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Types.l")
