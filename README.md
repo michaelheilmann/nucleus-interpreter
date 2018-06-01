@@ -12,81 +12,22 @@ Its current features encompass
 
 Nucleus: Interpreter depends on [Nucleus](https://github.com/primordialmachine/nucleus).
 
+## Build instructions
+  
+Download or checkout the source code from [https://github.com/primordialmachine/nucleus-interpreter](https://github.com/primordialmachine/nucleus-interpreter).
+See below for build instructions for some of the individual environments.
 
-## Building under Windows/Visual Studio
-Visual Studio is currently *still* supported.
+**The following build instructions and build options pertain to all products from the Nucleus series.
+  All products accept the build options described here.
+  The description of additional build options specific to a product are described in its documentation.
+  The name of this product in the build system is `Nucleus.Interpreter`.*
 
-Open the console.
+* [Windows 10/Visual Studio Community 2017](https://github.com/primordialmachine/nucleus/blob/master/documentation/building-under-windows-10-visual-studio-community-2017.md)
+* [Windows 10/Cygwin/GCC](https://github.com/primordialmachine/nucleus/blob/master/documentation/building-under-windows-10-cygwin-gcc.md)
+* [Linux/GCC](https://github.com/primordialmachine/nucleus/blob/master/documentation/building-under-linux-gcc.md)
+* [Linux/Clang](https://github.com/primordialmachine/nucleus/blob/master/documentation/building-under-linux-clang.md)
+* [macOS/Clang](https://github.com/primordialmachine/nucleus/blob/master/documentation/building-under-macos-clang.md)
 
-Change the directory to the directory of this file.
-
-Enter
-```
-cmake -G "Visual Studio 15 2017" CMakeLists.txt
-```
-to generate the project files for Win32.
-
-Enter
-```
-cmake -G "Visual Studio 15 2017 Win64" CMakeLists.txt
-```
-to generate the project files for x64.
-
-Open the files using Visual Studio 2017 and build all configurations.
-
-To execute the unit tests for a particular configuration, enter
-```
-ctest -C <configuration>
-```
-
-```configuration``` is one of `Debug`, `Release`, `MinSizeRel`, `RelWithDebInfo`.
-
-### Compilation options (Visual Studio)
-
-#### `With-Static-Runtime`
-For Visual Studio builds, the option `With-Static-Runtime=(ON|OFF)` is supported.
-`ON` enables static linking with the C runtime, `OFF` enables dynamic linking with the runtime.
-The default value is `ON`.
-
-For example, to enable dynamic linking with the runtime enter
-```
-cmake -DWith-Static-Runtime=OFF CMakeLists.txt
-```
-
-## Building und Linux and Cygwin
-Open the console.
-
-Change the directory to the directory of this file.
-
-Enter
-```
-cmake CMakeLists.txt 
-```
-to generate the project files.
-
-Enter
-```
-make all
-```
-to build.
-
-To execute the unit tests, enter
-```
-ctest
-```
-
-You can find the build products under `products/<platform>/(bin|lib)`
-where `<platform>` is one of `x86` or `x64`.
-
-### Compilation options (Linux and Cygwin)
-For Linux and Cygwin builds, certain CMake options are supported.
-The currently supported options are `With-Debug-Information=(ON|OFF)`
-and `With-Optimizations=(ON|OFF)`.
-
-For example, to enable both optimizations and debug information enter
-```
-cmake -DWith-Optimizations=ON -DWith-Debug-Information=ON CMakeLists.txt
-```
 
 ## Out of source builds
 The above build instruction for
