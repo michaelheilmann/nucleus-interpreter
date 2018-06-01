@@ -1,8 +1,7 @@
-# Copyright (c) 2017, 2018 Michael Heilmann
+# Copyright (c) 2017 - 2018 Michael Heilmann
 # Assert minimum CMake version.
 cmake_minimum_required (VERSION 3.8)
 # Define the static library.
-set(libraries Nucleus.Library)
 set(Nucleus.Interpreter.Library_HEADER_FILES)
 list(APPEND Nucleus.Interpreter.Library_HEADER_FILES
             "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/TaggedValue.h"
@@ -17,7 +16,8 @@ list(APPEND Nucleus.Interpreter.Library_INLAY_FILES
 set_source_files_properties(${Nucleus.Interpreter.Library_INLAY_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
 
 
-define_static_library(Nucleus.Interpreter Nucleus.Interpreter.Library ${libraries} ${NUCLEUS_LANGUAGE_ID_C})
+define_static_library(Nucleus.Interpreter Nucleus.Interpreter.Library ${NUCLEUS_LANGUAGE_ID_C})
+target_link_libraries(Nucleus.Interpreter.Library PUBLIC Nucleus.Library)
 
 # The interpreter types file.
 set(SOURCE_FILENAME "${CMAKE_CURRENT_SOURCE_DIR}/src/Nucleus/Interpreter/Types.l")
